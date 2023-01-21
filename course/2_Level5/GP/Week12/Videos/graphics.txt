@@ -1,0 +1,69 @@
+We've used images that we applied as a texture on
+top of our 3D objects. Now, we can do something
+even more fun. We can create our own images, much like how we've been
+doing in previous weeks, when we actually use
+primitives to generate images and apply those
+images on top of 3D objects. How do we do that?
+We need to create what is called the buffer,
+an off-screen buffer. Off-screen buffers basically
+mean like we already had a buffer when we're drawing
+everything in our sketch, the draw draws on a buffer and
+it displays it every time. But what we can do is we can
+create an off-screen buffer, somewhere that we don't
+actually draw it on screen unless we want
+to when we want to. So we can put stuff there, and then whenever we want, say, "Actually draw this." Instead of saying, "Draw this
+on the canvas," we can say, "Draw these on the 3D
+shape." Let's do that. Let's create another variable here called, let's
+call it buffer. I can call it whatever I want. So buffer, and I'm saying here, let's keep the noStroke. You say buffer equals
+createGraphics. So that's going to create
+another little canvas. CreateGraphics, that's
+300 by 300 square, and now I can say
+buffer.background. Now I can do all these commands that I can do on
+the normal Canvas, background, ellipse and
+other stuff as long as I put a dot between the
+buffer and the commands. So buffer.background. Actually, let's put white 255. We make the buffer white. We'll initialize the
+buffer as white. Look, you can see for example, what the buffer shows by doing this, buffer, mouseX, mouseY. This will draw the buffer where the mouseX and
+mouseY is, hopefully. No, it didn't. Yes
+of course it didn't. It didn't because we're in 3D
+world, we get rid of this. There we go. We're
+back into 2D land. I'm drawing the buffer, which is a white buffer,
+where my mouse is. If I said here, make it red, press "Refresh", that's the little buffer
+there that's drawn. Let's go back to the 3D world. WEBGL. Now that I know
+the buffer worked, I'll say background 125
+then I'll say buffer.fill. I want to use as a field, a nice little fuchsia
+and graphics.noStroke. The limitives that I'm
+going to put in the buffer, I want them to use noStroke,
+then buffer.ellipse. I want to draw ellipses
+and I want to put them as random.buffer.width and
+random value height. Random, she's going to generate
+a random value between, if you want me to be explicit, between zero and buffer width, what's buffer width?
+Three hundred. Here it's going to generate
+a random value between zero and what's buffer
+height? Three hundred. So between zero and 300. It generated an ellipse. Then I can say, take
+this buffer and well, I could use it as a
+texture on a box, for example, box 200. That's great. Only
+it didn't work. Let me see. It's here, haven't filled out the parameter. Ellipse takes four
+parameters so 10, 10. I'm putting ellipses at random
+locations on the buffer. Let me actually rotate the
+buffer so rotateY frameCount. Let's put here the usual
+thing, angleMode DEGREES. I'm generating images and I'm applying that
+theme as a texture, the 300 by 300 a little tile, I'm applying it on the cube. Let me make this perhaps a
+little bit more interesting. I can take a sphere, 100, 30, 30. Cannot draw on ellipsoids sphere. Let me just take this
+out. There we go. Rotate, texture, texture,
+buffer. There we go. Now, I can, of
+course, use lights. I could use the materials on top of whatever
+texture it has. Now look at that, the little
+things that are on it, they're a little bit stretched. Let me make it a
+little bit bigger. That's because the way
+a square texture is stretched in order
+to fit a sphere. There's a little
+hack around that. If I just make it a
+little bit wider, it starts resembling normal
+little circles again. Obviously, it's just
+an approximation. But basically, I've taken our graphics that I
+generate procedurally, using these random
+function and then I'm applying them on a 3D object. Imagine, you could
+take now any of these cool things that you've
+done in previous weeks, it is generated graphics,
+recursive trees, anything you've made that's really cool, letters,
+fonts, moving, noise, all that stuff, and apply it on a 3D object.

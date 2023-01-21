@@ -1,0 +1,17 @@
+Below are some matter.js resources which you might find useful as you're working on the programming exercises.
+
+I would advise that you click on a some of them right now and browse for a few minutes.
+
+Matter.js website for a 2D physics engine for the web
+
+Matter.js mixed shape demo
+
+Matter.js API documentation
+
+Matter.js Wiki pages
+
+Information on how to use Matter.js
+
+Link to the samples directory for examples
+
+Github page

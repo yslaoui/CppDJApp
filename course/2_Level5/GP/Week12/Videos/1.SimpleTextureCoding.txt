@@ -1,0 +1,32 @@
+Let's see now how we're
+going to be using images as textures for these 3D
+objects that we have created. Perhaps you've seen image loading in previous classes
+in other modules, but let me just go over it again. We're going to go into
+more detail very soon. I need a variable called the img, or whatever name I want it. This is my variable, that's where I'm going to
+store the image. Then I need a function
+called preload. Now in this function, I will use the image I created, wait a second, the asset. I have a folder
+here called assets. I have here an
+image called rocks. I'm going to be saying here, load the image from a
+folder called assets, and it's called rocks.jpg. The reason I'm putting it inside the preload function
+is because I don't want the setup or
+the draw function to be called until that
+image is loaded. Imagine it's a huge image, you don't want it to be loading, let say in setup
+and then for it to proceed in a draw function, it keep calling it draw it, draw it draw, when we're not 100 percent sure that
+it has in fact loaded. We're putting it in preload
+to make sure that it load before anything else
+below it has been called. That being done, we can
+say here now background 0, and then we can use
+the texture command, texture img and use a box. For example, apply this
+on the box, say box 300. Let's run this app. Perfect. We have here the
+texture applied on a box. Let me rotate the
+box a bit so that it's clear what's going on. RotateY frameCount,
+and I'll put here, of course, the thing that I
+always put angleMode DEGREES. There we go. I've
+applied an image and used it to create a texture
+to apply on this 3D object. I could use, for example, if I don't want to use a box, I could say plane 500
+by 500. There we go. You see there's a line there through the
+plane, a diagonal line. I don't know if you can
+see it in your screens. They can just say noStroke,
+and that will go away. That is the line from
+the two triangles that make up the plane. That's how you apply
+an image to a surface.

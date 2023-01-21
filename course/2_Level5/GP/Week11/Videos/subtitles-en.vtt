@@ -1,0 +1,489 @@
+WEBVTT
+
+1
+00:00:10.782 --> 00:00:14.500
+Another factor that affects the way the
+renderer renders the scene is perspective.
+
+2
+00:00:15.940 --> 00:00:17.530
+When we talk about perspective, again,
+
+3
+00:00:17.530 --> 00:00:19.710
+we're talking about
+the characteristics of the camera.
+
+4
+00:00:21.080 --> 00:00:25.600
+Once again, the sketches we saw up
+until now had the default perspective.
+
+5
+00:00:25.600 --> 00:00:29.551
+Now we'll see how we can change
+those default parameters.
+
+6
+00:00:29.551 --> 00:00:33.395
+There are four characteristics of
+the perspective, the field of view,
+
+7
+00:00:33.395 --> 00:00:36.300
+the aspect ratio, the near plane,
+and the far plane.
+
+8
+00:00:37.690 --> 00:00:40.840
+The field of view is the extent
+of the observable world
+
+9
+00:00:40.840 --> 00:00:42.950
+that is seen at any given moment.
+
+10
+00:00:42.950 --> 00:00:45.050
+And in this diagram,
+it is the angle theta.
+
+11
+00:00:47.340 --> 00:00:51.220
+Here are two images taken from
+the same location with two cameras.
+
+12
+00:00:51.220 --> 00:00:53.980
+One camera had a field of
+view of 55 degrees and
+
+13
+00:00:53.980 --> 00:00:58.480
+the other one had a field of view of a 130
+degrees, creating this wide angle view.
+
+14
+00:00:59.810 --> 00:01:03.640
+Humans have a field of view of 210
+degrees on the horizontal axis.
+
+15
+00:01:03.640 --> 00:01:06.210
+And our vertical range
+is about 150 degrees.
+
+16
+00:01:07.582 --> 00:01:10.644
+In P5,
+the default field of view is 60 degrees.
+
+17
+00:01:10.644 --> 00:01:14.612
+The aspect ratio defines the aspect
+ratio of the image, that is,
+
+18
+00:01:14.612 --> 00:01:18.580
+the ratio between the width and
+the height of view.
+
+19
+00:01:18.580 --> 00:01:23.058
+For example, here we have a 4:3 fullscreen
+view and a 16:9 widescreen view,
+
+20
+00:01:23.058 --> 00:01:26.540
+which are popular aspect ratios for
+TV and cinema respectively.
+
+21
+00:01:27.840 --> 00:01:32.060
+In P5, usually you'd want it to be the
+same aspect ratio as the canvas, that is,
+
+22
+00:01:32.060 --> 00:01:33.160
+width over height.
+
+23
+00:01:35.250 --> 00:01:39.639
+The far and near plane defines two planes
+within which 3D objects are observable.
+
+24
+00:01:40.730 --> 00:01:43.600
+Something that goes beyond
+the far plane is not visible.
+
+25
+00:01:43.600 --> 00:01:46.740
+Something that's nearer than near
+plane is also not visible, and
+
+26
+00:01:46.740 --> 00:01:47.610
+therefore not rendered.
+
+27
+00:01:48.940 --> 00:01:50.740
+In both cases,
+these objects will be clicked.
+
+28
+00:01:52.300 --> 00:01:54.750
+Let's play with all these
+in a live coding example.
+
+29
+00:01:56.703 --> 00:01:59.230
+So let's look now into perspective.
+
+30
+00:01:59.230 --> 00:02:02.694
+Again, I'm going to set up a default,
+a little dummy scene
+
+31
+00:02:02.694 --> 00:02:07.254
+there to highlight what's going on,
+normalMaterial, something easy.
+
+32
+00:02:07.254 --> 00:02:11.377
+And then I want to have some rods
+that extend into the scene so
+
+33
+00:02:11.377 --> 00:02:17.030
+that it's easy to see this clipping
+thing that I want to show you later on.
+
+34
+00:02:17.030 --> 00:02:24.016
+So for (var i = -600;
+
+35
+00:02:24.016 --> 00:02:32.529
+i<= 600; i+=150).
+
+36
+00:02:32.529 --> 00:02:39.270
+So I want to make, I'll use push and
+pop to place this rod.
+
+37
+00:02:39.270 --> 00:02:44.116
+So translate on the x axis by i, so
+
+38
+00:02:44.116 --> 00:02:49.828
+I will start putting rods from -600
+
+39
+00:02:49.828 --> 00:02:54.169
+to 600 at steps of 150.
+
+40
+00:02:54.169 --> 00:03:01.177
+So 0, 150, sorry, 0 here because we're
+translating, here box (80, 80, 500).
+
+41
+00:03:01.177 --> 00:03:05.975
+So I'm going to be placing boxes that
+
+42
+00:03:05.975 --> 00:03:10.777
+are 80 times 80 times 500.
+
+43
+00:03:10.777 --> 00:03:13.070
+Run it, make sure that it compiles.
+
+44
+00:03:14.780 --> 00:03:16.080
+Perfect, okay.
+
+45
+00:03:16.080 --> 00:03:17.910
+So I'm seeing these rods now.
+
+46
+00:03:17.910 --> 00:03:23.840
+Now, I have placed quite a few, but
+I only see a small portion of them.
+
+47
+00:03:23.840 --> 00:03:27.740
+So that's because of the camera view.
+
+48
+00:03:27.740 --> 00:03:30.291
+So this is what I wanted to demonstrate.
+
+49
+00:03:30.291 --> 00:03:36.943
+So now, the default camera, let's
+actually lift the camera a tiny bit so
+
+50
+00:03:36.943 --> 00:03:42.523
+that we can see everything
+a little bit from higher position,
+
+51
+00:03:42.523 --> 00:03:48.130
+height, 0, 0, so
+still in the center, 0, 0, 1, 0.
+
+52
+00:03:48.130 --> 00:03:51.655
+So it's a camera that's
+almost a default camera view,
+
+53
+00:03:51.655 --> 00:03:55.117
+only it's a little bit higher and
+it's looking down.
+
+54
+00:03:55.117 --> 00:03:58.546
+So that's what we're getting now,
+that's what we managed to get.
+
+55
+00:03:58.546 --> 00:04:01.560
+Still, I can't fit
+everything into the scene.
+
+56
+00:04:01.560 --> 00:04:09.133
+So that's because the perspective,
+perspective, by default, is 60.
+
+57
+00:04:09.133 --> 00:04:11.675
+Now, this won't work,
+yeah, this ruined it,
+
+58
+00:04:11.675 --> 00:04:15.610
+that's because, again, perspective,
+we're talking about radians.
+
+59
+00:04:15.610 --> 00:04:18.220
+We want to make sure that
+the language we're talking about
+
+60
+00:04:18.220 --> 00:04:19.890
+deals with it in degrees.
+
+61
+00:04:19.890 --> 00:04:24.840
+So angleMode(DEGREES), boom!
+
+62
+00:04:24.840 --> 00:04:31.090
+So by default, that's the view we have,
+60 degrees point of view.
+
+63
+00:04:31.090 --> 00:04:37.045
+So if I now make this,
+let's say, 120, boom!
+
+64
+00:04:37.045 --> 00:04:40.780
+It's like having a fish eye,
+a wide angle lens, and seeing through it.
+
+65
+00:04:40.780 --> 00:04:44.900
+Actually, a fish eye would probably
+be 180, let's see what that does.
+
+66
+00:04:44.900 --> 00:04:49.782
+Okay, that did something nasty.
+
+67
+00:04:49.782 --> 00:04:54.127
+Yep, okay, so let's stick to 120.
+
+68
+00:04:54.127 --> 00:04:58.660
+Let's leave this back to 60,
+the default view.
+
+69
+00:04:58.660 --> 00:05:01.140
+And now let's play with the next
+parameters in perspective,
+
+70
+00:05:01.140 --> 00:05:02.750
+which is the aspect ratio.
+
+71
+00:05:02.750 --> 00:05:07.978
+Now, we said that by default,
+it's width divided by height,
+
+72
+00:05:07.978 --> 00:05:11.144
+so in this case, 900 over 600.
+
+73
+00:05:11.144 --> 00:05:13.270
+So let's loot at that.
+
+74
+00:05:13.270 --> 00:05:14.270
+Nothing has changed.
+
+75
+00:05:15.500 --> 00:05:22.715
+Now, if I change this, so
+now the ratio is 9 over 6, basically.
+
+76
+00:05:22.715 --> 00:05:27.430
+Now, if I change this to
+something like 4 over 4,
+
+77
+00:05:27.430 --> 00:05:31.280
+that is 1, so let's leave it 4 over 4.
+
+78
+00:05:32.690 --> 00:05:37.855
+Look what I'm getting, it's rendering
+things as if it was a square canvas,
+
+79
+00:05:37.855 --> 00:05:41.913
+but the canvas is not square
+because it's 900 by 600.
+
+80
+00:05:41.913 --> 00:05:44.010
+And that's why it appears elongated.
+
+81
+00:05:44.010 --> 00:05:48.940
+So if I change this manually to 900,
+they appear correctly again.
+
+82
+00:05:50.000 --> 00:05:54.500
+So let's go back,
+let's put that width over height.
+
+83
+00:05:54.500 --> 00:05:57.290
+There's no reason to skew things.
+
+84
+00:05:57.290 --> 00:05:59.510
+And let's play now with
+the final parameter,
+
+85
+00:05:59.510 --> 00:06:02.820
+which is the planes, which are the planes.
+
+86
+00:06:02.820 --> 00:06:09.670
+So I'll just say that this
+plane is controlled by mouseY,
+
+87
+00:06:09.670 --> 00:06:13.380
+this one is by mouseX.
+
+88
+00:06:13.380 --> 00:06:19.840
+So actually,
+let me just play with that for the moment.
+
+89
+00:06:19.840 --> 00:06:23.280
+So if I just use,
+
+90
+00:06:24.830 --> 00:06:29.290
+the mouse now, mouseY,
+is controlling the near plane.
+
+91
+00:06:31.140 --> 00:06:36.010
+And you see that as the value increases
+and I get further away from the camera,
+
+92
+00:06:36.010 --> 00:06:40.410
+I get clipping, I clip the shape and
+I see only half of it.
+
+93
+00:06:41.470 --> 00:06:46.543
+And let me just make this, let's leave
+
+94
+00:06:46.543 --> 00:06:51.318
+this as it is actually and do mouseX.
+
+95
+00:06:51.318 --> 00:06:53.970
+And now mouseX controls
+the far away plane.
+
+96
+00:06:53.970 --> 00:07:00.261
+And sure enough, if I decrease
+the value here, it's coming closer.
+
+97
+00:07:00.261 --> 00:07:05.260
+So somewhere here, it's about zero.
+
+98
+00:07:05.260 --> 00:07:07.670
+And because I have the other plane
+as well, I can still see something.
+
+99
+00:07:07.670 --> 00:07:11.170
+But this is zero on the x-axis, so
+
+100
+00:07:11.170 --> 00:07:16.376
+I'm clipping everything
+further away from zero.
+
+101
+00:07:16.376 --> 00:07:18.710
+And this is when I see the whole object.
+
+102
+00:07:18.710 --> 00:07:22.780
+So I can control now the two planes,
+the far away and
+
+103
+00:07:22.780 --> 00:07:26.720
+the near clipping plane,
+with the mouseX and mouseY.
+
+104
+00:07:26.720 --> 00:07:30.121
+So this wraps up all the parameters
+that go into perspective that control
+
+105
+00:07:30.121 --> 00:07:30.743
+the camera.

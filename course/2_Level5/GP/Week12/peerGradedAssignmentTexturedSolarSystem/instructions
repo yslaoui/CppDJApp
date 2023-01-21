@@ -1,0 +1,27 @@
+Warning: Remember to use Bracket’s live view to view your sketch. Loading images will not work when the html is viewed independently in the browser.
+
+In this programming exercise, you’re asked to program a basic textured solar system in 3D just like in the image shown above. Use the code you have written in the previous solar system exercise as a starting point.
+
+Steps to complete
+Step 1: Load the appropriate texture on the sun using the assets provided in the attached zip file.
+
+Step 2: Rotate the sun on its Y-axis.
+
+Step 3: Load the appropriate texture on the earth using the assets provided in the attached zip file.
+
+Step 4: Create a "stars plane" that is in the background of the scene and apply to it a dynamic texture (an off-screen buffer) which you have generated using the createGraphics() function. Remember to rotate your plane by 40 degrees or so, so that it faces the camera at the appropriate angle.
+
+Step 5: Create an array called starLocs which you populate with 200 random locations on that buffer in your setup function.
+
+Step 6: Write a function sky() that loops over starLocs and draws a small white rectangle in each location specified.
+
+Step 7: Extend sky() so that it loops over starLocs and occasionally replaces an entry in the array with new random values. That way your stars will glitter on screen.
+
+Bonus round: "Make it your own"
+Add another planet that is full of craters which you have procedurally generated.
+
+Add a moon. (Image of moon surface included in assets.)
+
+How else could you extend the planetary system? 
+
+
