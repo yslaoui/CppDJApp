@@ -1,32 +1,42 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "OrderBookEntry.h"
 
-enum class OrderBookType{bid, ask};
 
-class OrderBookEntry 
-{
-    public:
+int main () {
 
-        OrderBookEntry(double _price,
-                       double _amount,
-                       std::string _timestamp,
-                       std::string _product,
-                       OrderBookType _orderType)
-        : price(_price), 
-          amount(_amount),
-          timestamp(_timestamp),
-          product(_product),
-          orderType(_orderType)
-        {
-        }
-        double price;
-        double amount;
-        std::string timestamp;
-        std::string product;
-        OrderBookType orderType;
 
-};
+    std::vector<OrderBookEntry> orders;
+
+    orders.push_back(OrderBookEntry {5319.450228, 
+                                     0.00020075, 
+                                     "2020/03/17 17:01:24.884492", 
+                                     "BTC/USDT",  
+                                     OrderBookType::bid}
+    );
+
+    orders.push_back(OrderBookEntry {1000, 
+                                    2, 
+                                    "2020/03/17 17:01:24.884492", 
+                                    "USDJPY",  
+                                    OrderBookType::ask}
+    );
+    
+    // Iterator by reference
+    for (OrderBookEntry& order: orders) 
+    {
+        std::cout << "The price of " << order.product << " is " << order.price << std::endl;
+    }
+
+    return 0;
+
+}
+// to generate a named binary
+// g++ g++ exhangeApp.cpp OrderBookEntry.cpp
+// .a/out
+
+
 
 void printMenu() 
 {
@@ -119,60 +129,3 @@ void processUserOption(int userOption)
 }
 
 
-int main () {
-
-/*
-    while (true) {
-        printMenu();        
-        int userOption = getUser();
-        processUserOption(userOption);
-    }
-*/
-    std::vector<OrderBookEntry> orders;
-
-    orders.push_back(OrderBookEntry {5319.450228, 
-                                     0.00020075, 
-                                     "2020/03/17 17:01:24.884492", 
-                                     "BTC/USDT",  
-                                     OrderBookType::bid}
-    );
-
-    orders.push_back(OrderBookEntry {1000, 
-                                    2, 
-                                    "2020/03/17 17:01:24.884492", 
-                                    "USDJPY",  
-                                    OrderBookType::ask}
-    );
-    
-    std::cout << "The price is " << orders[0].product << std::endl;
-    std::cout << "The price is " << orders[1].product << std::endl;
-
-    // Way 1 Iterator by reference
-    for (OrderBookEntry& order: orders) 
-    {
-        std::cout << "The price is " << order.price << std::endl;
-    }
-
-    // Way 2: Array style indexing
-    for (unsigned int i = 0; i < orders.size();++i) 
-    {
-        std::cout << "The price is " << orders[i].price << std::endl;
-    }
-
-    // Way 3: Object stule accessing
-    for (unsigned int i = 0; i < orders.size();++i) 
-    {
-        std::cout << "The price is " << orders.at(i).price << std::endl;
-    }
-
-
-
-
-
-
-    return 0;
-
-}
-// to generate a named binary
-// g++ listOfOptions.cpp  -o merklerex
-// .merkelrex
