@@ -1,44 +1,40 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include "ExchangeApp.h"
 #include "OrderBookEntry.h"
 
+ExchangeApp::ExchangeApp() {}
+void ExchangeApp::init() 
+{
+    while (true) 
+    {
+        printMenu();
+        int input = getUser();
+        processUserOption(input);
+    }
+}
 
-int main () {
+void ExchangeApp::loadOrderBook() 
+{
+    
+    orders.push_back(OrderBookEntry {5319.450228,
+                                    0.00020075,
+                                    "2020/03/17 17:01:24.884492",
+                                    "BTC/USDT", 
+                                    OrderBookType::bid}
+   );
 
 
-    std::vector<OrderBookEntry> orders;
-
-    orders.push_back(OrderBookEntry {5319.450228, 
-                                     0.00020075, 
-                                     "2020/03/17 17:01:24.884492", 
-                                     "BTC/USDT",  
-                                     OrderBookType::bid}
-    );
-
-    orders.push_back(OrderBookEntry {1000, 
-                                    2, 
-                                    "2020/03/17 17:01:24.884492", 
-                                    "USDJPY",  
+    orders.push_back(OrderBookEntry {1000,
+                                    2,
+                                    "2020/03/17 17:01:24.884492",
+                                    "USDJPY", 
                                     OrderBookType::ask}
     );
-    
-    // Iterator by reference
-    for (OrderBookEntry& order: orders) 
-    {
-        std::cout << "The price of " << order.product << " is " << order.price << std::endl;
-    }
-
-    return 0;
 
 }
-// to generate a named binary
-// g++ g++ exhangeApp.cpp OrderBookEntry.cpp
-// .a/out
 
-
-
-void printMenu() 
+void ExchangeApp::printMenu() 
 {
     // 1 print help
     std::cout << "1: Print Help" << std::endl;
@@ -54,7 +50,7 @@ void printMenu()
     std::cout << "5: Continue" << std::endl;
 }
 
-int getUser() 
+int ExchangeApp::getUser() 
 {
     std::cout << "================" << std::endl;
     std::cout << "Type in 1-6" << std::endl;
@@ -65,38 +61,38 @@ int getUser()
 
 }
 
-void printHelp() 
+void ExchangeApp::printHelp() 
 {
     std::cout << "Your aim is to make money, analyze the market" <<std::endl;
 }
 
-void printMarketStats() 
+void ExchangeApp::printMarketStats() 
 {
     std::cout << "Market looks good" <<std::endl;
 }
 
-void enterOffer() 
+void ExchangeApp::enterOffer() 
 {
     std::cout << "make an offer - enter the amount" <<std::endl;
 }
 
-void enterBid() 
+void ExchangeApp::enterBid() 
 {
     std::cout << "make a bid - enter the amount" <<std::endl;
 }
 
-void printWallet()
+void ExchangeApp::printWallet()
 {
     std::cout << "Your wallet is empty" <<std::endl;
 }
 
-void gotoNextTimeframe()
+void ExchangeApp::gotoNextTimeframe()
 {
     std::cout << "Going to next time frame" <<std::endl;
 }
 
 
-void processUserOption(int userOption) 
+void ExchangeApp::processUserOption(int userOption) 
 {
     if (userOption == 0) 
     {
@@ -127,5 +123,3 @@ void processUserOption(int userOption)
         gotoNextTimeframe();
     }
 }
-
-

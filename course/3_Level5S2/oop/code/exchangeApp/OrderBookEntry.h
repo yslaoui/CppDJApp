@@ -1,6 +1,8 @@
+#pragma once
 #ifndef ORDERBOOKENTRY_H
 #define ORDERBOOKENTRY_H
 #include <string>
+
 
 enum class OrderBookType{bid, ask};
 
