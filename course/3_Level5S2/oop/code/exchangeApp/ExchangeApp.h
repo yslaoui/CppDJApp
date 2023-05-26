@@ -2,6 +2,7 @@
 #ifndef EXCHANGEAPP_H
 #define EXCHANGEAPP_H
 #include "OrderBookEntry.h"
+#include<vector>
 
 class ExchangeApp
 {

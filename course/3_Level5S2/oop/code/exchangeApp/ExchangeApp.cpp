@@ -2,12 +2,14 @@
 #include <vector>
 #include "ExchangeApp.h"
 #include "OrderBookEntry.h"
+#include "CsvReader.h"
 
 ExchangeApp::ExchangeApp() {}
 void ExchangeApp::init() 
 {
     while (true) 
     {
+        loadOrderBook();
         printMenu();
         int input = getUser();
         processUserOption(input);
@@ -17,20 +19,7 @@ void ExchangeApp::init()
 void ExchangeApp::loadOrderBook() 
 {
     
-    orders.push_back(OrderBookEntry {5319.450228,
-                                    0.00020075,
-                                    "2020/03/17 17:01:24.884492",
-                                    "BTC/USDT", 
-                                    OrderBookType::bid}
-   );
-
-
-    orders.push_back(OrderBookEntry {1000,
-                                    2,
-                                    "2020/03/17 17:01:24.884492",
-                                    "USDJPY", 
-                                    OrderBookType::ask}
-    );
+    orders = CsvReader::readCSV("orderBook.csv");
 
 }
 
@@ -69,6 +58,14 @@ void ExchangeApp::printHelp()
 void ExchangeApp::printMarketStats() 
 {
     std::cout << "Market looks good" <<std::endl;
+    int bids = 0;
+    int asks = 0;
+    for (OrderBookEntry& order: orders) 
+    {
+        if (order.orderType == OrderBookType::bid) bids++;
+        if (order.orderType == OrderBookType::ask) asks++;
+    }
+    std::cout << "The order book is made of " << bids << " bids and " << asks << " asks." << std::endl;
 }
 
 void ExchangeApp::enterOffer() 
