@@ -1,8 +1,9 @@
 #pragma once
 #ifndef EXCHANGEAPP_H
 #define EXCHANGEAPP_H
-#include "OrderBookEntry.h"
 #include<vector>
+#include "OrderBookEntry.h"
+#include "OrderBook.h"
 
 class ExchangeApp
 {
@@ -11,10 +12,10 @@ class ExchangeApp
         /** Start the app*/
         void init();
 
+        OrderBook orders{"orderBook.csv"};
+        std::string currentTime = orders.getEarliestTime();
+
     private:
-        std::vector<OrderBookEntry> orders;
-        
-        void loadOrderBook();
         void printMenu();
         int getUser();
         void printHelp(); 
@@ -24,6 +25,7 @@ class ExchangeApp
         void printWallet();
         void gotoNextTimeframe();
         void processUserOption(int userOption); 
+
 };
 
 #endif

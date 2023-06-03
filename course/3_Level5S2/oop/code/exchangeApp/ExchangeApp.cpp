@@ -3,24 +3,17 @@
 #include "ExchangeApp.h"
 #include "OrderBookEntry.h"
 #include "CsvReader.h"
+#include "OrderBook.h"
 
 ExchangeApp::ExchangeApp() {}
 void ExchangeApp::init() 
 {
     while (true) 
     {
-        loadOrderBook();
         printMenu();
         int input = getUser();
-        processUserOption(input);
+        processUserOption(input); 
     }
-}
-
-void ExchangeApp::loadOrderBook() 
-{
-    
-    orders = CsvReader::readCSV("orderBook.csv");
-
 }
 
 void ExchangeApp::printMenu() 
@@ -36,7 +29,9 @@ void ExchangeApp::printMenu()
     // 5 print wallet 
     std::cout << "5: Print a wallet" << std::endl;
     // 6 continue
-    std::cout << "5: Continue" << std::endl;
+    std::cout << "6: Continue" << std::endl;
+    // Print current time
+    std::cout << "The current time is " << currentTime << std::endl;
 }
 
 int ExchangeApp::getUser() 
@@ -57,15 +52,20 @@ void ExchangeApp::printHelp()
 
 void ExchangeApp::printMarketStats() 
 {
-    std::cout << "Market looks good" <<std::endl;
-    int bids = 0;
-    int asks = 0;
-    for (OrderBookEntry& order: orders) 
+    std::cout << "The products in the market are " << std::endl;
+    for (const std::string& prod : orders.getKnownProducts()) 
     {
-        if (order.orderType == OrderBookType::bid) bids++;
-        if (order.orderType == OrderBookType::ask) asks++;
+        std::vector<OrderBookEntry> orders_sub;   
+        orders_sub = orders.getOrders(OrderBookType::ask, 
+                                      prod, 
+                                      currentTime);
+        std::cout << "Product: " << prod << " " << std::endl;
+        std::cout << "Asks seen " << orders_sub.size() << std::endl;
+        std::cout << "Max ask: " << OrderBook::getHigherPrice(orders_sub) << std::endl;
+        std::cout << "Min ask: " << OrderBook::getLowerPrice(orders_sub) << std::endl;
+
     }
-    std::cout << "The order book is made of " << bids << " bids and " << asks << " asks." << std::endl;
+
 }
 
 void ExchangeApp::enterOffer() 
@@ -86,6 +86,7 @@ void ExchangeApp::printWallet()
 void ExchangeApp::gotoNextTimeframe()
 {
     std::cout << "Going to next time frame" <<std::endl;
+    currentTime = orders.getNextTime(currentTime); 
 }
 
 

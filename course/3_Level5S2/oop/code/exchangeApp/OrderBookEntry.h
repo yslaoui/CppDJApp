@@ -17,11 +17,13 @@ class OrderBookEntry
                     std::string _product,
                     OrderBookType _orderType);
         static OrderBookType stringToOrderBookType(std::string order);
+        
         double price;
         double amount;
         std::string timestamp;
         std::string product;
         OrderBookType orderType;
+        
 };
 
 #endif

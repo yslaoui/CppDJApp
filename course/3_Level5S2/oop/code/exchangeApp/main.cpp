@@ -4,10 +4,26 @@
 #include "OrderBookEntry.h"
 #include "ExchangeApp.h"
 #include "CsvReader.h"
+#include "OrderBook.h"
 
 int main () {
     ExchangeApp app{};
     app.init();
+    
+    
+    // std::string input = "orderBook.csv";
+    // std::vector<OrderBookEntry> output = CsvReader::readCSV(input);
+    // std::cout << output[0].price << std::endl;
+    // double price = std::stod("0.02187308");
+    // std::cout << price << std::endl;
+
+    // OrderBook input{"orderBook.csv"};
+    // std::vector<std::string> result = input.getKnownProducts(); 
+    // for (std::string& e: result) 
+    // {
+    //     std::cout << e << std::endl;
+    // }
+
 }
 
 
