@@ -22,12 +22,40 @@ OrderBookEntry CsvReader::stringsToOBE(std::vector<std::string> tokens)
     }
     catch(const std::exception&e) 
     {
+        std::cout << "CsvReader::stringsToOBE(oneArg) Bad price " << price << " or amount " << amount << std::endl;
         throw e;
     }
 
     OrderBookEntry obe{price, amount, tokens[0], tokens[1], OrderBookEntry::stringToOrderBookType(tokens[2])};
     return obe;
 }
+
+
+ OrderBookEntry CsvReader::stringsToOBE(std::string priceString, 
+                                       std::string amountString, 
+                                       std::string timestamp, 
+                                       std::string product, 
+                                       OrderBookType type) 
+{
+
+    double price;
+    double amount;
+    try 
+    {
+        price = std::stod(priceString);
+        amount = std::stod(amountString);
+    }
+    catch(const std::exception&e) 
+    {
+        std::cout << "CsvReader::stringsToOBE(multipleArgs) Bad price " << price << " or amount " << amount << std::endl;
+        throw e;
+    }
+    OrderBookEntry obe{price, amount, timestamp, product, type};
+    return obe;
+
+}
+
+
 
 std::vector<std::string> CsvReader::tokenize(std::string csvLine, char separator) 
 {

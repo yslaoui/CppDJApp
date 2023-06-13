@@ -15,9 +15,10 @@
 
 int main() 
 {
-    
+ 
     CppUnit::TextUi::TestRunner myrunner{};
-    
+    /*
+
     // *** CsvReader class tests // *** 
     myrunner.addTest(new CppUnit::TestCaller<CsvReaderTest> {
         "test_tokenize", 
@@ -32,6 +33,11 @@ int main()
     myrunner.addTest(new CppUnit::TestCaller<CsvReaderTest> {
     "test_readCSV", 
     &CsvReaderTest::test_readCSV 
+    });
+
+    myrunner.addTest(new CppUnit::TestCaller<CsvReaderTest> {
+    "test_stringsToOBEStrings", 
+    &CsvReaderTest::test_stringsToOBEStrings 
     });
 
     // *** OrderBook class tests // *** 
@@ -59,7 +65,30 @@ int main()
     "test_getNextTime", 
     &OrderBookTest::test_getNextTime 
     });
+    
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_insertOrder", 
+    &OrderBookTest::test_insertOrder 
+    });
 
- 
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_comparePriceAsc", 
+    &OrderBookTest::test_comparePriceAsc 
+    });
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_comparePriceDesc", 
+    &OrderBookTest::test_comparePriceDesc 
+    });    
+
+    */
+   
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_matchOrders", 
+    &OrderBookTest::test_matchOrders 
+    });  
+
+          
+
     myrunner.run();
 }

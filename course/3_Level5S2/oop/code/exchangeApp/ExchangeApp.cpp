@@ -39,7 +39,17 @@ int ExchangeApp::getUser()
     std::cout << "================" << std::endl;
     std::cout << "Type in 1-6" << std::endl;
     int userOption;
-    std::cin >> userOption;
+    std::string line;
+    std::getline(std::cin, line);
+    try 
+    {
+        userOption = std::stoi(line);
+    }
+    catch(const std::exception&) 
+    {
+        //
+    }
+    
     std::cout << "You chose: " << userOption << std::endl;
     return userOption;
 
@@ -68,9 +78,29 @@ void ExchangeApp::printMarketStats()
 
 }
 
-void ExchangeApp::enterOffer() 
+void ExchangeApp::enterAsk() 
 {
-    std::cout << "make an offer - enter the amount" <<std::endl;
+    std::cout << "make an offer - enter the amount: example ETH/BTC,200,5 " <<std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+    std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
+    if (tokens.size() != 3) std::cout << "ExchangeApp::enterAsk(): Incorrect number of inputs" << std::endl;
+    try 
+    {
+        OrderBookEntry obe = CsvReader::stringsToOBE(
+                        tokens[1], 
+                        tokens[2], 
+                        currentTime, 
+                        tokens[0], 
+                        OrderBookType::ask);    
+        orders.insertOrder(obe);
+    } 
+    catch(const std::exception& e) 
+    {
+        std::cout << "ExchangeApp::enterAsk(): Exception on stringsToOBE() function" << std::endl;
+    }
+
+    
 }
 
 void ExchangeApp::enterBid() 
@@ -87,6 +117,11 @@ void ExchangeApp::gotoNextTimeframe()
 {
     std::cout << "Going to next time frame" <<std::endl;
     currentTime = orders.getNextTime(currentTime); 
+    std::vector<OrderBookEntry> sales = orders.matchOrders("DOGE/BTC", currentTime);
+    for (OrderBookEntry& sale: sales) 
+    {
+        std::cout << "sale amount is " << sale.amount << " and sale price is " << sale.price << std::endl; 
+    }
 }
 
 
@@ -106,7 +141,7 @@ void ExchangeApp::processUserOption(int userOption)
     }
     if (userOption == 3) 
     {
-        enterOffer();
+        enterAsk();
     }
         if (userOption == 4) 
     {

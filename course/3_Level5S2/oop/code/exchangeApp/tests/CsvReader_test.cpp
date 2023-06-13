@@ -49,6 +49,18 @@ class CsvReaderTest : public CppUnit::TestFixture
 
         }
 
-
-
+        void test_stringsToOBEStrings() 
+        {
+            std::string price = "0.02186299";
+            std::string amount = "0.1";
+            std::string timeStamp = "2020/03/17 17:01:24.884492";
+            std::string product = "ETH/BTC";            
+            OrderBookType type = OrderBookType::ask;
+            OrderBookEntry result = CsvReader::stringsToOBE(price, amount, timeStamp, product, type);
+            CPPUNIT_ASSERT(result.price == 0.02186299);
+            CPPUNIT_ASSERT(result.amount == 0.1);
+            CPPUNIT_ASSERT(result.timestamp == timeStamp);
+            CPPUNIT_ASSERT(result.product == product);
+            CPPUNIT_ASSERT(result.orderType == type);
+        }
 };

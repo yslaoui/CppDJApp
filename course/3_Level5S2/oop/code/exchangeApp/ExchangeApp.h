@@ -11,6 +11,7 @@ class ExchangeApp
         ExchangeApp();
         /** Start the app*/
         void init();
+        void enterAsk(); 
 
         OrderBook orders{"orderBook.csv"};
         std::string currentTime = orders.getEarliestTime();
@@ -20,7 +21,6 @@ class ExchangeApp
         int getUser();
         void printHelp(); 
         void printMarketStats(); 
-        void enterOffer(); 
         void enterBid();
         void printWallet();
         void gotoNextTimeframe();

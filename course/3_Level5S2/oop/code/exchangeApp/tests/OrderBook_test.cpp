@@ -14,6 +14,7 @@ class OrderBookTest : public CppUnit::TestFixture
     public:
         OrderBook input{"../orderBook.csv"};
 
+
         void test_getKnownProducts() 
         {    
             std::vector<std::string> result = input.getKnownProducts(); 
@@ -65,5 +66,58 @@ class OrderBookTest : public CppUnit::TestFixture
             CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:40.107326") == "2020/03/17 17:01:45.111661");
             CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:45.111661") == "2020/03/17 17:01:50.116610");
         }
+
+        void test_insertOrder() 
+        {
+            OrderBook input{"./orderBookTest.csv"};
+            int initialSize = input.orders.size();
+            OrderBookEntry input2{5418.51724799, 0.00072134, "2020/03/17 17:01:35.103526", "BTC/USDT", OrderBookType::ask};
+            input.insertOrder(input2);
+            // Good practice: print the results first and see if they are as expected.    
+            // std::cout << "input.orders[0].price " << input.orders[0].price << std::endl;
+            // std::cout << "input.orders[1].price " << input.orders[1].price << std::endl;
+            // std::cout << "input.orders[2].price " << input.orders[2].price << std::endl;            
+            // std::cout << "input.orders[3].price " << input.orders[3].price << std::endl;
+
+            CPPUNIT_ASSERT(input.orders.size() == initialSize + 1); 
+            CPPUNIT_ASSERT(input.orders[0].price == 0.02187308);
+            CPPUNIT_ASSERT(input.orders[1].price == 116.80745636);
+            CPPUNIT_ASSERT(input.orders[2].price == 5418.51724799);
+            CPPUNIT_ASSERT(input.orders[3].price == 0.0014);         
+        }
+
+        void test_comparePriceAsc() 
+        {
+            OrderBook input{"./orderBookTest.csv"};
+            bool result = OrderBook::comparePriceAsc(input.orders[0], input.orders[1]);
+            CPPUNIT_ASSERT(result == true);
+        }        
+        
+        void test_comparePriceDesc() 
+        {
+            OrderBook input{"./orderBookTest.csv"};
+            bool result = OrderBook::comparePriceDesc(input.orders[1], input.orders[2]);
+            CPPUNIT_ASSERT(result == true);
+        }
+
+        void test_matchOrders() 
+        {
+            OrderBook input{"./matcherTest2.csv"};
+            std::vector<OrderBookEntry> result = input.matchOrders("ETH/BTC", "2020/03/17 17:01:24.884492");
+            std::cout <<  "test_matchOrders(): size of sales  " << result.size() << std::endl; 
+            for (OrderBookEntry& sale: result) 
+            {
+                std::cout <<  "price  " << sale.price << std::endl; 
+                std::cout <<  "amount  " << sale.amount << std::endl; 
+            }
+            
+            CPPUNIT_ASSERT(result[0].price == 10);
+            CPPUNIT_ASSERT(result[0].amount == 0.5); // highest bid gets priority
+            CPPUNIT_ASSERT(result[1].price == 10); 
+            CPPUNIT_ASSERT(result[1].amount == 0.1);
+            CPPUNIT_ASSERT(result[2].price == 10); 
+            CPPUNIT_ASSERT(result[2].amount == 0.4);
+            
+        }        
 };
 

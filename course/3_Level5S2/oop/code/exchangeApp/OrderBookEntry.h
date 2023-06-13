@@ -4,7 +4,7 @@
 #include <string>
 
 
-enum class OrderBookType{bid, ask, unknown};
+enum class OrderBookType{bid, ask, unknown, sale};
 
 #pragma once
 
@@ -16,6 +16,7 @@ class OrderBookEntry
                     std::string _timestamp,
                     std::string _product,
                     OrderBookType _orderType);
+                    
         static OrderBookType stringToOrderBookType(std::string order);
         
         double price;
@@ -23,6 +24,9 @@ class OrderBookEntry
         std::string timestamp;
         std::string product;
         OrderBookType orderType;
+
+    /** comparing helper for sorting function */
+    static bool compareOrders(OrderBookEntry e1, OrderBookEntry e2);
         
 };
 
