@@ -1,0 +1,97 @@
+#include <iostream>
+
+/*
+transform the following iterative function into a recursive function:
+function A1(N)
+   for N >= i >=0
+     print(i)
+
+*/
+
+void A1(int N)
+{
+    if (N<0) return;
+    else 
+    {
+        std::cout << N << std::endl;
+        return A1(N-1);
+    }
+}
+
+/*
+Which of the following algorithms correourse/3_Level5S2/Algorithms/crackingTheCodingInterview/Recursionspond to the recursive version of F? 
+Before looking at the alternatives, 
+please come up with your own solution first.
+function F(N)
+    result=1
+    for N >= i >= 2 
+       result=result*i
+   return result
+
+*/
+
+int F(int N) 
+{
+    if (N == 1) return 1;
+    return N * F(N-1); 
+}
+
+/*
+a: integer number
+b: integer number 
+function Sum(a,b)
+    result=0    
+    for b >= i >= 1
+        result=result+1
+    return a+result 
+
+Which of the following algorithms correspond to the recursive version of Sum?
+Before looking at the alternatives, please come up with your own solution first.
+
+*/
+
+int Sum(int a, int b) 
+{
+    if (b == 0) return a;
+    return 1 + Sum(a, b-1);
+}
+
+
+/*
+a: integer number
+b: integer number 
+function Sub(a,b)
+    result=0    
+    for b >= i >= 1
+        result=result-1
+    return a+result
+Which of the following algorithms correspond to the recursive version of
+Sub? Before looking at the alternatives,  please come up with your own 
+solution first.
+
+
+*/
+
+int Sub(int a, int b)
+{
+    if (b == 0) return a;
+    return Sub(a, b-1) - 1;
+}
+
+int main()
+{
+    // A1(5);
+    /*
+    int F_result = F(4);
+    std::cout << F_result << std::endl;
+    */
+    /*
+    int Sum_result = Sum(10, 5);
+    std::cout << Sum_result << std::endl;
+    
+    */
+    int Sub_result = Sub(5,4);
+    std::cout << Sub_result  << std::endl;
+    return 0;
+}
+
