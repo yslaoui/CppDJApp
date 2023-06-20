@@ -106,15 +106,6 @@ void OrderBook::insertOrder(OrderBookEntry& order)
    
 }
 
-bool OrderBook::comparePriceAsc(OrderBookEntry& e1, OrderBookEntry& e2) 
-{
-   return (e1.price < e2.price);
-};
-
-bool OrderBook::comparePriceDesc(OrderBookEntry& e1, OrderBookEntry& e2) 
-{
-   return (e1.price > e2.price);
-}; 
 
 std::vector<OrderBookEntry> OrderBook::matchOrders(std::string product, std::string timeStamp) 
 {
@@ -122,44 +113,54 @@ std::vector<OrderBookEntry> OrderBook::matchOrders(std::string product, std::str
    std::vector<OrderBookEntry> asks = getOrders(OrderBookType::ask, product, timeStamp);
    std::vector<OrderBookEntry> bids = getOrders(OrderBookType::bid, product, timeStamp);
    // Next sort the orders
-   std::sort(asks.begin(), asks.end(), comparePriceAsc);
-   std::sort(bids.begin(), bids.end(), comparePriceDesc);
+   std::sort(asks.begin(), asks.end(), OrderBookEntry::comparePriceAsc);
+   std::sort(bids.begin(), bids.end(), OrderBookEntry::comparePriceDesc);
    for (OrderBookEntry& ask: asks) 
    {
-      double salePrice = ask.price;
       for (OrderBookEntry& bid: bids) 
       {
          if (bid.price >= ask.price) 
          {
+            OrderBookEntry sale{ask.price, 0, timeStamp, product, OrderBookType::sale};
+            if (ask.username == "user") 
+            {
+               sale.username = "user";
+               sale.orderType = OrderBookType::asksale; 
+
+            }
+            if (bid.username == "user") 
+            {
+               sale.username = "user";
+               sale.orderType = OrderBookType::bidsale; 
+
+            }
             if (bid.amount == ask.amount) 
             {
-               double saleAmount = ask.amount;
+               sale.amount = ask.amount;
                bid.amount = 0;
-               sales.push_back(OrderBookEntry{salePrice, saleAmount, timeStamp, product, OrderBookType::sale});
+               sales.push_back(sale);
                break;
             }         
-            else if (bid.amount > ask.amount) 
+            if (bid.amount > ask.amount) 
             {
-               double saleAmount = ask.amount;
+               sale.amount = ask.amount;
                bid.amount = bid.amount - ask.amount;
-               sales.push_back(OrderBookEntry{salePrice, saleAmount, timeStamp, product, OrderBookType::sale});
+               sales.push_back(sale);
                break;            
             }
-            else if (bid.amount < ask.amount)
+            if (bid.amount < ask.amount && bid.amount > 0)
             {
-               double saleAmount = bid.amount;
+               sale.amount = bid.amount;
                bid.amount = 0;
                ask.amount = ask.amount - bid.amount;
-               sales.push_back(OrderBookEntry{salePrice, saleAmount, timeStamp, product, OrderBookType::sale});
+               sales.push_back(sale);
                continue;
             }
          }
 
       }
-
    }
    return sales;
-
 }
 
 

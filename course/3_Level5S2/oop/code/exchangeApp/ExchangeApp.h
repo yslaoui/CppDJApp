@@ -4,23 +4,25 @@
 #include<vector>
 #include "OrderBookEntry.h"
 #include "OrderBook.h"
+#include "Wallet.h"
 
 class ExchangeApp
 {
     public:
         ExchangeApp();
-        /** Start the app*/
         void init();
-        void enterAsk(); 
-
+        // state of the app
         OrderBook orders{"orderBook.csv"};
         std::string currentTime = orders.getEarliestTime();
+        Wallet wallet{};
 
+        // public methods that require testing
+        void enterAsk();
     private:
         void printMenu();
-        int getUser();
+        int  getUser();
         void printHelp(); 
-        void printMarketStats(); 
+        void printMarketStats();  
         void enterBid();
         void printWallet();
         void gotoNextTimeframe();

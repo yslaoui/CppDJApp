@@ -37,12 +37,6 @@ class OrderBook
     /** Insert an order into the order book*/
     void insertOrder(OrderBookEntry& order);
 
-    /** comparator for sorting orders by price in ascending order*/
-    static bool comparePriceAsc(OrderBookEntry& e1, OrderBookEntry& e2);
-
-    /** comparator for sorting orders by price in descending order*/
-    static bool comparePriceDesc(OrderBookEntry& e1, OrderBookEntry& e2);
-
     /** Match bids and asks and return a vector of ssale orders, for a given product and time stamp*/
     std::vector<OrderBookEntry> matchOrders(std::string product, std::string timeStamp);
 

@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include "ExchangeApp.h"
@@ -5,9 +6,12 @@
 #include "CsvReader.h"
 #include "OrderBook.h"
 
+
 ExchangeApp::ExchangeApp() {}
 void ExchangeApp::init() 
 {
+    wallet.insertCurrency("BTC", 10);
+    wallet.insertCurrency("USDT", 1000);
     while (true) 
     {
         printMenu();
@@ -80,7 +84,7 @@ void ExchangeApp::printMarketStats()
 
 void ExchangeApp::enterAsk() 
 {
-    std::cout << "make an offer - enter the amount: example ETH/BTC,200,5 " <<std::endl;
+    std::cout << "make an offer - enter the amount: example BTC/ETH,200,5 ie sell 5 BTC for 200 ETH " <<std::endl;
     std::string input;
     std::getline(std::cin, input);
     std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
@@ -93,35 +97,80 @@ void ExchangeApp::enterAsk()
                         currentTime, 
                         tokens[0], 
                         OrderBookType::ask);    
-        orders.insertOrder(obe);
+        obe.username = "user";
+        if (wallet.canFulfillOrder(obe)) 
+        {
+            orders.insertOrder(obe);
+             std::cout << "Order succesfully fullfilled" << std::endl;
+        }
+        else 
+        {
+            std::cout << "Insufficient funds" << std::endl;
+        }
     } 
     catch(const std::exception& e) 
     {
         std::cout << "ExchangeApp::enterAsk(): Exception on stringsToOBE() function" << std::endl;
     }
-
-    
 }
 
 void ExchangeApp::enterBid() 
 {
-    std::cout << "make a bid - enter the amount" <<std::endl;
+    std::cout << "make a bid - enter the amount example ETH/BTC,0.5,20 ie buy 0.5 ETH with 0.5*20 BTC" <<std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+    std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
+    if (tokens.size() != 3) std::cout << "ExchangeApp::enterBid(): Incorrect number of inputs" << std::endl;
+    try 
+    {
+        OrderBookEntry obe = CsvReader::stringsToOBE(
+                        tokens[1], 
+                        tokens[2], 
+                        currentTime, 
+                        tokens[0], 
+                        OrderBookType::bid);
+        obe.username = "user";    
+        if (wallet.canFulfillOrder(obe)) 
+        {
+            orders.insertOrder(obe);
+             std::cout << "Order succesfully fullfilled" << std::endl;
+        }
+        else 
+        {
+            std::cout << "Insufficient funds" << std::endl;
+        }
+    } 
+    catch(const std::exception& e) 
+    {
+        std::cout << "ExchangeApp::enterBid(): Exception on stringsToOBE() function" << std::endl;
+    }    
 }
 
 void ExchangeApp::printWallet()
-{
-    std::cout << "Your wallet is empty" <<std::endl;
+{    
+    std::cout << "Wallet has BTC ? " << wallet.containsCurrency("BTC", 10) << std::endl;
+    std::cout << wallet.toString() << std::endl;
 }
 
 void ExchangeApp::gotoNextTimeframe()
 {
     std::cout << "Going to next time frame" <<std::endl;
-    currentTime = orders.getNextTime(currentTime); 
-    std::vector<OrderBookEntry> sales = orders.matchOrders("DOGE/BTC", currentTime);
-    for (OrderBookEntry& sale: sales) 
+    for (std::string p: orders.getKnownProducts()) 
     {
-        std::cout << "sale amount is " << sale.amount << " and sale price is " << sale.price << std::endl; 
+        std::cout << "matching " << p << std::endl;
+        std::vector<OrderBookEntry> sales = orders.matchOrders(p, currentTime);
+        std::cout << "size of sales " << sales.size() << std::endl;
+        for (OrderBookEntry& sale: sales) 
+        {
+            if (sale.username == "user") 
+            {
+                wallet.processSale(sale);
+            }
+            std::cout << "sale amount is " << sale.amount << " and sale price is " << sale.price << std::endl; 
+        }
+
     }
+    currentTime = orders.getNextTime(currentTime); 
 }
 
 
@@ -156,3 +205,20 @@ void ExchangeApp::processUserOption(int userOption)
         gotoNextTimeframe();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

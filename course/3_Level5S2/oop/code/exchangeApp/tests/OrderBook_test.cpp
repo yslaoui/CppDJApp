@@ -89,20 +89,20 @@ class OrderBookTest : public CppUnit::TestFixture
         void test_comparePriceAsc() 
         {
             OrderBook input{"./orderBookTest.csv"};
-            bool result = OrderBook::comparePriceAsc(input.orders[0], input.orders[1]);
+            bool result = OrderBookEntry::comparePriceAsc(input.orders[0], input.orders[1]);
             CPPUNIT_ASSERT(result == true);
         }        
         
         void test_comparePriceDesc() 
         {
             OrderBook input{"./orderBookTest.csv"};
-            bool result = OrderBook::comparePriceDesc(input.orders[1], input.orders[2]);
+            bool result = OrderBookEntry::comparePriceDesc(input.orders[1], input.orders[2]);
             CPPUNIT_ASSERT(result == true);
         }
 
         void test_matchOrders() 
         {
-            OrderBook input{"./matcherTest2.csv"};
+            OrderBook input{"./matcherTest3.csv"};
             std::vector<OrderBookEntry> result = input.matchOrders("ETH/BTC", "2020/03/17 17:01:24.884492");
             std::cout <<  "test_matchOrders(): size of sales  " << result.size() << std::endl; 
             for (OrderBookEntry& sale: result) 
