@@ -1,0 +1,1 @@
+g++ -g mainTest.cpp ../OrderBookEntry.cpp ../ExchangeApp.cpp ../CsvReader.cpp ../OrderBook.cpp ../Wallet.cpp ../CandleStick.cpp  ./OrderBookEntry_test.cpp ./ExchangeApp_test.cpp ./CsvReader_test.cpp ./OrderBook_test.cpp ./wallet_test.cpp ./CandleStick_test.cpp -lcppunit -o debugme && gdb debugme

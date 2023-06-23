@@ -1,9 +1,10 @@
+#pragma once
 #ifndef CSVREADER_H
 #define CSVREADER_H
 #include <vector>
 #include <iostream>
 #include "OrderBookEntry.h"
-#pragma once
+
     
 class CsvReader
 {

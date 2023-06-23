@@ -16,8 +16,7 @@ OrderBook::OrderBook(std::string filename)
    }
 
 std::vector<std::string> OrderBook::getKnownProducts()
-   {
-       
+   {    
        std::vector<std::string> products;
        std::map<std::string, bool> prodMap;
        for (OrderBookEntry& order: orders) 
@@ -161,8 +160,92 @@ std::vector<OrderBookEntry> OrderBook::matchOrders(std::string product, std::str
       }
    }
    return sales;
+}       
+
+
+
+ std::vector<OrderBookEntry> OrderBook::getterOrders() 
+ {
+   return orders;
+ }
+
+std::string OrderBook::getPreviousTime(std::string timeStamp) 
+{
+   std::string previousTimeStamp;
+   std::string result;
+   std::vector<OrderBookEntry>::reverse_iterator it;
+   for (it = orders.rbegin(); it != orders.rend(); it++) 
+   {
+      if (it->timestamp < timeStamp) 
+      {
+         previousTimeStamp = it->timestamp;
+         break;
+      }
+   }
+
+   previousTimeStamp == "" ? result = orders[0].timestamp :  result = previousTimeStamp;
+   return result;
 }
 
 
+ double OrderBook::averagePrice(std::vector<OrderBookEntry> orderEntry) 
+ {
+   double sumValue = 0;
+   double sumPrice = 0;
 
+   for (OrderBookEntry& o: orderEntry) 
+   {
+      sumValue += o.price * o.amount;
+      sumPrice += o.price;
+   }
+   return sumValue / sumPrice;
+
+ }
+
+CandleStick OrderBook::computeCandle(std::string timeStamp,
+                        std::string product,
+                        OrderBookType type) 
+{
+      CandleStick result{timeStamp, product, type};
+
+      
+      std::vector<OrderBookEntry> currentOrders = getOrders(type, product, timeStamp);
+      std::vector<OrderBookEntry> previousOrders = getOrders(type, product, getPreviousTime(timeStamp));
+
+      // High and low
+      result.high = getHigherPrice(currentOrders);
+      result.low =  getLowerPrice(currentOrders);
+
+      // open and close     
+      result.close = averagePrice(currentOrders);
+      result.open =  averagePrice(previousOrders);
+
+      return result;
+}
+
+std::vector<std::string> OrderBook::getKnownTimeStamps() 
+{
+   std::vector<std::string> timeStamps;
+   std::map<std::string, bool> timeMap;
+   for (OrderBookEntry& order: orders) 
+   {
+      timeMap[order.timestamp] = true;
+   }
+   for (const auto& e: timeMap) 
+   {
+      timeStamps.push_back(e.first);
+   }
+   return timeStamps;               
+}
+
+std::vector<CandleStick> OrderBook::computeCandles(std::string product, OrderBookType type) 
+{
+   std::vector<CandleStick> result;
+   std::vector<std::string> timeStamps = getKnownTimeStamps();
+   for (std::string& t: timeStamps) 
+   {
+     result.push_back(computeCandle(t, product, type));
+  }
+   return result;
+}  
 

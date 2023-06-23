@@ -22,15 +22,14 @@ class WalletTest : public CppUnit::TestFixture
             CPPUNIT_ASSERT(wallet.containsCurrency("DOGE", 10));
         }
 
+        /**Wallet contains 10 BTC, we exchange 1 BTC for 1 ETH*/
         void test_processSale() 
         {
             wallet.insertCurrency("BTC", 10);
-            std::cout << "before" << std::endl;
-            std::cout <<  wallet.toString() << std::endl; 
             OrderBookEntry sale{1, 1, "2020/03/17 17:01:24.884492", "ETH/BTC", OrderBookType::bidsale, "user"};
-            std::cout << "after" << std::endl;
             wallet.processSale(sale);
-            std::cout <<  wallet.toString() << std::endl; 
+            CPPUNIT_ASSERT(wallet.containsCurrency("ETH", 1));
+            CPPUNIT_ASSERT(wallet.containsCurrency("BTC", 9));
         }
 
 };
