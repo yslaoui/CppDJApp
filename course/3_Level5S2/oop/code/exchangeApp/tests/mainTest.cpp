@@ -127,5 +127,30 @@ int main()
     &OrderBookTest::test_computeCandles 
     });  
 
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_getPosition", 
+    &OrderBookTest::test_getPosition 
+    });  
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_generateGrid", 
+    &OrderBookTest::test_generateGrid 
+    });  
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_lowestLow", 
+    &OrderBookTest::test_lowestLow 
+    });  
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_highestHigh", 
+    &OrderBookTest::test_highestHigh 
+    }); 
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_plotCandleSticks", 
+    &OrderBookTest::test_plotCandleSticks 
+    }); 
+
     myrunner.run();
 }

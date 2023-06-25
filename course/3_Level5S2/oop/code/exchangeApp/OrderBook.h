@@ -61,14 +61,30 @@ class OrderBook
                               std::string product,
                               OrderBookType orderType);
 
+    /** Computes a vector of unique timestamps in the orderbook*/
     std::vector<std::string> getKnownTimeStamps(); 
 
+    /** Computes candleStick data*/
     std::vector<CandleStick> computeCandles(std::string product, OrderBookType type); 
 
+
+    /** helper function computes position of value argument in candleStick between 0 and height where height is the height of the plot*/
+    static int getPosition(double& value, double& low, double& high, int& scaleMin, int& scaleMax); 
+
+    static std::vector<std::vector<char>> generateGrid(int& rows, int& columns);
+
+    static void plotGrid(std::vector<std::vector<char>>& grid);
+
+    /** Returns the lowest low value in a vector of candle sticks*/
+    static double lowestLow(std::vector<CandleStick>& candles);
+
+    /** Returns the highest high value in a vector of candle sticks*/
+    static double highestHigh(std::vector<CandleStick>& candles);
+
+    static void plotCandleSticks(std::vector<CandleStick>& candles, int& desiredHeight);
 
     private: 
     /** Vector of OrderBookEntry objects, each representing one row in the CSV file*/ 
         std::vector<OrderBookEntry> orders;
-
-
 };
+

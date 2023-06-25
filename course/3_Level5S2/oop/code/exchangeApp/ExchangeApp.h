@@ -12,7 +12,7 @@ class ExchangeApp
         ExchangeApp();
         void init();
         // state of the app
-        OrderBook orders{"orderBook.csv"};
+        OrderBook orders{"bigMidtermFile.csv"};
         std::string currentTime = orders.getEarliestTime();
         Wallet wallet{};
 

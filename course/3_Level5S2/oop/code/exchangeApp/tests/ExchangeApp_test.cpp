@@ -13,7 +13,7 @@
 class ExchangeAppTest : public CppUnit::TestFixture
 {
     public:
-        OrderBook input{"../orderBook.csv"};
+        OrderBook input{"./smallCourseFile.csv"};
         ExchangeApp app{};
         void test_enterAsk() 
         {    

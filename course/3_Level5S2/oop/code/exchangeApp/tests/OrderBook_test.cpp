@@ -14,8 +14,9 @@
 class OrderBookTest : public CppUnit::TestFixture
 {
     public:
-        OrderBook input{"../orderBook.csv"};
+        OrderBook input{"./smallCourseFile.csv"};
         std::vector<OrderBookEntry> orders = input.getterOrders();
+        
 
 
         void test_getKnownProducts() 
@@ -129,17 +130,33 @@ class OrderBookTest : public CppUnit::TestFixture
 
         void test_computeCandle() 
         {
+             std::cout << "yeah this is NOT working" << std::endl;
+            for (const auto & t: input.getKnownTimeStamps()) 
+            {
+                for (const auto & p: input.getKnownProducts()) 
+                {
+                    CandleStick myCandle = input.computeCandle(t, p, OrderBookType::ask);
+                    
+                    CPPUNIT_ASSERT(myCandle.timeStamp == t);
+                    CPPUNIT_ASSERT(myCandle.product == p);
+                    CPPUNIT_ASSERT(myCandle.orderType == OrderBookType::ask);
+                }
+            }     
             std::string timeStamp = "2020/03/17 17:01:35.103526";
             std::string product = "BTC/USDT";
             OrderBookType type  = OrderBookType::ask;
             CandleStick candle = input.computeCandle(timeStamp, product, type);
-            CPPUNIT_ASSERT( candle.timeStamp == "2020/03/17 17:01:35.103526");
-            CPPUNIT_ASSERT( candle.product == "BTC/USDT");
-            CPPUNIT_ASSERT( candle.orderType == OrderBookType::ask);
+            CPPUNIT_ASSERT( candle.timeStamp == timeStamp);
+            CPPUNIT_ASSERT( candle.product == product);
+            CPPUNIT_ASSERT( candle.orderType == type);
+  
+
             CPPUNIT_ASSERT( candle.high == 5463.22);
             CPPUNIT_ASSERT( candle.low == 5360.03200001);
-            CPPUNIT_ASSERT( abs(candle.close - 0.7913) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
-            CPPUNIT_ASSERT( abs(candle.open - 0.6746) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
+            std::cout << "candle.close" << candle.close << std::endl;
+            std::cout << "candle.open" << candle.open << std::endl;
+            CPPUNIT_ASSERT( abs(candle.close - 5394.07) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
+            CPPUNIT_ASSERT( abs(candle.open  - 5394.38) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
             // testing last date
             // std::string timeStamp = "2020/03/17 17:02:00.124758";
             // std::string product = "DOGE/BTC";
@@ -167,12 +184,13 @@ class OrderBookTest : public CppUnit::TestFixture
             CPPUNIT_ASSERT(result[4] == "2020/03/17 17:01:45.111661");
             CPPUNIT_ASSERT(result[5] == "2020/03/17 17:01:50.116610");
             CPPUNIT_ASSERT(result[6] == "2020/03/17 17:01:55.120438");
-            CPPUNIT_ASSERT(result[7] == "2020/03/17 17:02:00.124758");
         }
 
         void test_computeCandles() 
         {
-            std::string product = "DOGE/BTC";
+            // std::string product = "DOGE/BTC";
+            // OrderBookType type  = OrderBookType::ask;
+            std::string product = "BTC/USDT";
             OrderBookType type  = OrderBookType::ask;
             std::vector<CandleStick> result = input.computeCandles(product, type);
             // Testing timestamps
@@ -196,7 +214,96 @@ class OrderBookTest : public CppUnit::TestFixture
 
                 CPPUNIT_ASSERT(result[i].high == input.getHigherPrice(input.getOrders(type, product, result[i].timeStamp)));
             }
-
         }
+
+        void test_getPosition() 
+        {
+            std::vector<double> inputs = {101, 109, 110, 189, 200};
+            std::vector<int> result(5);
+            double value = 150;
+            double low = 100;
+            double high = 200;
+            int scaleMin = 0;
+            int scaleHigh = 10;
+            for (int i=0;  i< result.size(); ++i) 
+            {
+                result[i] = OrderBook::getPosition(inputs[i], low, high, scaleMin, scaleHigh); 
+            }   
+            std::cout << "result[4] " << result[4] << std::endl;
+            CPPUNIT_ASSERT(result[0] == scaleMin);
+            CPPUNIT_ASSERT(result[1] == 0);
+            CPPUNIT_ASSERT(result[2] == 1);
+            CPPUNIT_ASSERT(result[3] == 8);
+            CPPUNIT_ASSERT(result[4] == scaleHigh);
+        }
+
+        void test_generateGrid() 
+        {
+            int rows = 5;
+            int columns = 5;
+            std::vector<std::vector<char>>  grid =  OrderBook::generateGrid(rows, columns);
+            grid[2][3] = 'o';
+            std::cout << std::endl;
+            OrderBook::plotGrid(grid);
+        }
+
+        void test_lowestLow() 
+        {
+    
+            std::vector<CandleStick> candlesAsk;
+            std::vector<CandleStick> candlesBid;
+            double lowestaskLow;
+            double lowestbidLow;
+            std::vector<std::string> products = input.getKnownProducts();
+            for (std::string& p: products) 
+            {
+                candlesAsk = input.computeCandles(p, OrderBookType::ask);
+                candlesBid = input.computeCandles(p, OrderBookType::bid);
+                lowestaskLow = OrderBook::lowestLow(candlesAsk);
+                lowestbidLow = OrderBook::lowestLow(candlesBid);
+                std::cout << "product " << p << "has lowest ask " << lowestaskLow << "and lowest bid "  << lowestbidLow << std::endl;
+            }
+        }
+
+        void test_highestHigh() 
+        {
+    
+            std::vector<CandleStick> candlesAsk;
+            std::vector<CandleStick> candlesBid;
+            double highestaskHigh;
+            double highestbidHigh;
+            std::vector<std::string> products = input.getKnownProducts();
+            for (std::string& p: products) 
+            {
+                candlesAsk = input.computeCandles(p, OrderBookType::ask);
+                candlesBid = input.computeCandles(p, OrderBookType::bid);
+                highestaskHigh = OrderBook::highestHigh(candlesAsk);
+                highestbidHigh = OrderBook::highestHigh(candlesBid);
+                std::cout << "product " << p << "has highest ask " << highestaskHigh << "and highest bid "  << highestbidHigh << std::endl;
+            }
+        }
+
+        void test_plotCandleSticks() 
+        {
+            
+            int desiredHeight = 30; 
+            OrderBookType type  = OrderBookType::ask;
+            for (std::string& p: input.getKnownProducts()) 
+            {
+                std::vector<CandleStick> candles = input.computeCandles(p, type);
+                std::cout << "**************************************** "  << std::endl;   
+                std::cout << "Candle sticks for product " << p << std::endl;
+                std::cout << "**************************************** "  << std::endl;
+                OrderBook::plotCandleSticks(candles, desiredHeight);                
+            }
+        }
+
 };
 
+/*
+BTC/USDT 
+DOGE/BTC
+DOGE/USDT
+ETH/BTC
+ETH/USD
+*/

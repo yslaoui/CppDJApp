@@ -3,6 +3,8 @@
 #include <map>
 #include <algorithm> // for std::sort
 #include "ExchangeApp.h"
+#include <cmath>
+
 /*
 First create the cpp file for the class implement a dummy version of the three
 methods and make it compile  In the constructor use the readCsv method and store
@@ -190,15 +192,15 @@ std::string OrderBook::getPreviousTime(std::string timeStamp)
 
  double OrderBook::averagePrice(std::vector<OrderBookEntry> orderEntry) 
  {
-   double sumValue = 0;
-   double sumPrice = 0;
+   double sumValue  = 0;
+   double sumAmount = 0;
 
    for (OrderBookEntry& o: orderEntry) 
    {
-      sumValue += o.price * o.amount;
-      sumPrice += o.price;
+      sumValue  += o.price * o.amount;
+      sumAmount += o.amount;
    }
-   return sumValue / sumPrice;
+   return sumValue / sumAmount;
 
  }
 
@@ -249,3 +251,101 @@ std::vector<CandleStick> OrderBook::computeCandles(std::string product, OrderBoo
    return result;
 }  
 
+int OrderBook::getPosition(double& value, double& low, double& high, int& scaleMin, int& scaleMax)  
+   {
+      if (low > high || value < low || value > high) std::cout << "Incorrect input" << std::endl;
+      double range = high - low;
+      double normalizedValue = (value - low) / range; // maps value in [0,1]
+      int scaledValue = scaleMin + floor(normalizedValue * (scaleMax - scaleMin)); // maps value in [scaleMin, scaleMax]
+      return scaledValue;
+   }
+
+
+
+std::vector<std::vector<char>> OrderBook::generateGrid(int& rows, int& columns) 
+{
+   std::vector<std::vector<char>> result(rows, std::vector<char>(columns,'|'));
+   return result;
+}
+
+void OrderBook::plotGrid(std::vector<std::vector<char>>& grid)
+{
+   int rows = grid.size();
+   int columns = grid[0].size();
+   std::cout << "Generating grid \n" << std::endl;
+   for (int i=rows-1; i>=0; --i) 
+   {
+         for (int j=0; j<columns; ++j) 
+         {
+            std::cout << "   "<< grid[i][j] << "     ";
+         }
+         std::cout << std::endl;
+   }     
+   for (int j=0; j< columns; ++j) 
+   {
+      std::cout << "time " << j << "   ";
+   }
+   std::cout << std::endl;
+
+}
+
+double OrderBook::lowestLow(std::vector<CandleStick>& candles) 
+{
+   double minPrice = std::numeric_limits<double>::max(); 
+   for (CandleStick& c: candles) 
+   {
+      // std::cout << "the low is " << c.low << std::endl;
+      minPrice = std::min(minPrice, c.low);
+   }
+   return minPrice;
+   
+}
+
+double OrderBook::highestHigh(std::vector<CandleStick>& candles) 
+{
+   double maxPrice = std::numeric_limits<double>::lowest(); 
+   for (CandleStick& c: candles) 
+   {
+      //  std::cout << "the high is " << c.high << std::endl;
+      maxPrice = std::max(maxPrice, c.high);
+   }
+   return maxPrice;
+   
+}
+
+ void OrderBook::plotCandleSticks(std::vector<CandleStick>& candles, int& desiredHeight) 
+ {
+   
+   int columns = candles.size();
+   int initial = 0;
+   int rows = desiredHeight;
+   std::vector<std::vector<char>> grid = OrderBook::generateGrid(rows, columns);
+   double lowestLow = OrderBook::lowestLow(candles);
+   double highestHigh = OrderBook::highestHigh(candles);
+   int open;
+   int close;
+   int high;
+   int low;
+   std::cout << "The lowest low across all products is " << lowestLow << std::endl;
+   std::cout << "The highest high across all products is " << highestHigh << std::endl;
+   for (int i=0; i< columns; ++i) 
+   {
+      open  = OrderBook::getPosition(candles[i].open,  lowestLow, highestHigh, initial, desiredHeight);
+      close = OrderBook::getPosition(candles[i].close, lowestLow, highestHigh, initial, desiredHeight);
+      high  = OrderBook::getPosition(candles[i].high,  lowestLow, highestHigh, initial, desiredHeight);
+      low   = OrderBook::getPosition(candles[i].low,   lowestLow, highestHigh, initial, desiredHeight);
+      grid[open][i]  = 'o';
+      grid[close][i] = 'c';
+      grid[high-1][i]  = 'h';
+      grid[low][i]   = 'l';
+      for (int j=0; j< rows; ++j) 
+      {
+         if ((j>=open && j <=close) || (j<=open && j >=close)) grid[j][i] = 61;
+         if ((j < low)||(j >= high)) grid[j][i] = ' ';
+         if ((j == low) || (j == high-1)) grid[j][i] = '|';
+      }
+      std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << std::endl; 
+      std::cout << "iteration " << i << "done" << std::endl;
+   }
+   OrderBook::plotGrid(grid);
+}

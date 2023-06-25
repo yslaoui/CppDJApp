@@ -21,6 +21,9 @@ class CandleStick
         double high;
         double low;
         double close;
-        
-
+    
 };
+
+
+
+
