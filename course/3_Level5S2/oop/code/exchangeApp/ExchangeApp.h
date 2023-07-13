@@ -27,6 +27,8 @@ class ExchangeApp
         void printWallet();
         void gotoNextTimeframe();
         void processUserOption(int userOption); 
+        void plotTrends();
+
 
 };
 

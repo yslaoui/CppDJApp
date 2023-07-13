@@ -5,6 +5,9 @@
 #include "OrderBookEntry.h"
 #include "CsvReader.h"
 #include "OrderBook.h"
+#include "CandleStick.h"
+
+
 
 
 ExchangeApp::ExchangeApp() {}
@@ -34,6 +37,8 @@ void ExchangeApp::printMenu()
     std::cout << "5: Print a wallet" << std::endl;
     // 6 continue
     std::cout << "6: Continue" << std::endl;
+    // 7 continue
+    std::cout << "7: Plot market trends" << std::endl;
     // Print current time
     std::cout << "The current time is " << currentTime << std::endl;
 }
@@ -41,7 +46,7 @@ void ExchangeApp::printMenu()
 int ExchangeApp::getUser() 
 {
     std::cout << "================" << std::endl;
-    std::cout << "Type in 1-6" << std::endl;
+    std::cout << "Type in 1-7" << std::endl;
     int userOption;
     std::string line;
     std::getline(std::cin, line);
@@ -173,12 +178,31 @@ void ExchangeApp::gotoNextTimeframe()
     currentTime = orders.getNextTime(currentTime); 
 }
 
+void ExchangeApp::plotTrends() 
+{
+    std::cout << "make a plot - enter the product and type example ETH/BTC, ask" <<std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+    std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
+    if (tokens.size() != 2) std::cout << "ExchangeApp::enterBid(): Incorrect number of inputs" << std::endl;
+    int desiredHeight = 20;
+    std::string product = tokens[0];
+    OrderBookType type =  OrderBookEntry::stringToOrderBookType(tokens[1]);
+    std::string candlePlotStartTime = orders.getNextTime(currentTime); // at t=0, open=close so candlestick is not relevant
+    std::vector<CandleStick> candles = orders.computeNextFiveCandles(product, type, candlePlotStartTime);
+    std::cout << "**************************************** "  << std::endl;   
+    std::cout << "Candle sticks for product " << product << " and type " << tokens[1] << std::endl;
+    std::cout << "**************************************** "  << std::endl;
+    OrderBook::plotCandleSticks(candles, desiredHeight);
+
+
+}
 
 void ExchangeApp::processUserOption(int userOption) 
 {
     if (userOption == 0) 
     {
-        std::cout << "Invalid Choice. Choose 1-6" <<std::endl;
+        std::cout << "Invalid Choice. Choose 1-7" <<std::endl;
     }
     if (userOption == 1) 
     {
@@ -203,6 +227,10 @@ void ExchangeApp::processUserOption(int userOption)
     if (userOption == 6) 
     {
         gotoNextTimeframe();
+    }
+    if (userOption == 7) 
+    {
+        plotTrends();
     }
 }
 

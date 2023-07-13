@@ -14,7 +14,8 @@
 class OrderBookTest : public CppUnit::TestFixture
 {
     public:
-        OrderBook input{"./smallCourseFile.csv"};
+        // OrderBook input{"./smallCourseFile.csv"};
+        OrderBook input{"../bigMidtermFile.csv"};
         std::vector<OrderBookEntry> orders = input.getterOrders();
         
 
@@ -62,12 +63,24 @@ class OrderBookTest : public CppUnit::TestFixture
         {
             std::string firstTime = input.getEarliestTime();
             std::string lastTime =  "2020/03/17 17:02:00.124758";   
+            std::string time1 =             // CPPUNIT_ASSERT(result[0] == "2020/03/17 17:01:24.884492");
+            // CPPUNIT_ASSERT(result[1] == "2020/03/17 17:01:30.099017");
+            // CPPUNIT_ASSERT(result[2] == "2020/03/17 17:01:35.103526");
+            // CPPUNIT_ASSERT(result[3] == "2020/03/17 17:01:40.107326");
+            // CPPUNIT_ASSERT(result[4] == "2020/03/17 17:01:45.111661");
+            // CPPUNIT_ASSERT(result[5] == "2020/03/17 17:01:50.116610");
+            // CPPUNIT_ASSERT(result[6] == "2020/03/17 17:01:55.120438");
+ "2020/03/17 17:01:30.099017";   
+            std::string time2 =  "2020/03/17 17:01:35.103526";
+            std::string time3 =  "2020/03/17 17:01:40.107326";
+            std::string time4 =  "2020/03/17 17:01:50.116610";
+            
             CPPUNIT_ASSERT(input.getNextTime(lastTime) == firstTime);
             CPPUNIT_ASSERT(input.getNextTime(firstTime) == "2020/03/17 17:01:30.099017");
-            CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:30.099017") == "2020/03/17 17:01:35.103526");
-            CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:35.103526") == "2020/03/17 17:01:40.107326");
-            CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:40.107326") == "2020/03/17 17:01:45.111661");
-            CPPUNIT_ASSERT(input.getNextTime("2020/03/17 17:01:45.111661") == "2020/03/17 17:01:50.116610");
+            CPPUNIT_ASSERT(input.getNextTime(time1) == "2020/03/17 17:01:35.103526");
+            CPPUNIT_ASSERT(input.getNextTime(time2) == "2020/03/17 17:01:40.107326");
+            CPPUNIT_ASSERT(input.getNextTime(time3) == "2020/03/17 17:01:45.111661");
+
         }
 
         void test_insertOrder() 
@@ -101,7 +114,9 @@ class OrderBookTest : public CppUnit::TestFixture
         void test_matchOrders() 
         {
             OrderBook input4{"./matcherTest.csv"};
-            std::vector<OrderBookEntry> result = input4.matchOrders("ETH/BTC", "2020/03/17 17:01:24.884492");
+            std::string product = "ETH/BTC";
+            std::string timeStamp = "2020/03/17 17:01:24.884492";
+            std::vector<OrderBookEntry> result = input4.matchOrders(product, timeStamp);
             std::cout <<  "test_matchOrders(): size of sales  " << result.size() << std::endl; 
             for (OrderBookEntry& sale: result) 
             {
@@ -135,7 +150,10 @@ class OrderBookTest : public CppUnit::TestFixture
             {
                 for (const auto & p: input.getKnownProducts()) 
                 {
-                    CandleStick myCandle = input.computeCandle(t, p, OrderBookType::ask);
+                    std::string product = p;
+                    std::string timeStamp = t;
+                    OrderBookType type = OrderBookType::ask;
+                    CandleStick myCandle = input.computeCandle(timeStamp, product, type);
                     
                     CPPUNIT_ASSERT(myCandle.timeStamp == t);
                     CPPUNIT_ASSERT(myCandle.product == p);
@@ -177,6 +195,11 @@ class OrderBookTest : public CppUnit::TestFixture
         void test_getKnownTimeStamps() 
         {
             std::vector<std::string> result = input.getKnownTimeStamps();
+            std::cout << "THE KNOWN TIMESTAMPS ARE" << std::endl;
+            for (int i=0; i< result.size(); ++i) 
+            {
+                std::cout << result[i] << std::endl;
+            }
             CPPUNIT_ASSERT(result[0] == "2020/03/17 17:01:24.884492");
             CPPUNIT_ASSERT(result[1] == "2020/03/17 17:01:30.099017");
             CPPUNIT_ASSERT(result[2] == "2020/03/17 17:01:35.103526");
@@ -211,8 +234,8 @@ class OrderBookTest : public CppUnit::TestFixture
             // testing high
             for (int i=0; i<result.size(); ++i) 
             {   
-
-                CPPUNIT_ASSERT(result[i].high == input.getHigherPrice(input.getOrders(type, product, result[i].timeStamp)));
+                std::vector<OrderBookEntry> testOrders = input.getOrders(type, product, result[i].timeStamp);
+                CPPUNIT_ASSERT(result[i].high == input.getHigherPrice(testOrders));
             }
         }
 
@@ -257,8 +280,10 @@ class OrderBookTest : public CppUnit::TestFixture
             std::vector<std::string> products = input.getKnownProducts();
             for (std::string& p: products) 
             {
-                candlesAsk = input.computeCandles(p, OrderBookType::ask);
-                candlesBid = input.computeCandles(p, OrderBookType::bid);
+                OrderBookType ask = OrderBookType::ask;
+                OrderBookType bid = OrderBookType::bid;
+                candlesAsk = input.computeCandles(p, ask);
+                candlesBid = input.computeCandles(p, bid);
                 lowestaskLow = OrderBook::lowestLow(candlesAsk);
                 lowestbidLow = OrderBook::lowestLow(candlesBid);
                 std::cout << "product " << p << "has lowest ask " << lowestaskLow << "and lowest bid "  << lowestbidLow << std::endl;
@@ -275,8 +300,10 @@ class OrderBookTest : public CppUnit::TestFixture
             std::vector<std::string> products = input.getKnownProducts();
             for (std::string& p: products) 
             {
-                candlesAsk = input.computeCandles(p, OrderBookType::ask);
-                candlesBid = input.computeCandles(p, OrderBookType::bid);
+                OrderBookType ask = OrderBookType::ask;
+                OrderBookType bid = OrderBookType::bid;
+                candlesAsk = input.computeCandles(p, ask);
+                candlesBid = input.computeCandles(p, bid);
                 highestaskHigh = OrderBook::highestHigh(candlesAsk);
                 highestbidHigh = OrderBook::highestHigh(candlesBid);
                 std::cout << "product " << p << "has highest ask " << highestaskHigh << "and highest bid "  << highestbidHigh << std::endl;
@@ -285,17 +312,54 @@ class OrderBookTest : public CppUnit::TestFixture
 
         void test_plotCandleSticks() 
         {
-            
-            int desiredHeight = 30; 
-            OrderBookType type  = OrderBookType::ask;
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            int desiredHeight = 20; 
+            OrderBookType type  = OrderBookType::bid;
             for (std::string& p: input.getKnownProducts()) 
             {
-                std::vector<CandleStick> candles = input.computeCandles(p, type);
+                std::vector<CandleStick> candles = input.computeNextFiveCandles(p, type, timestamps[test_index]);
                 std::cout << "**************************************** "  << std::endl;   
                 std::cout << "Candle sticks for product " << p << std::endl;
                 std::cout << "**************************************** "  << std::endl;
                 OrderBook::plotCandleSticks(candles, desiredHeight);                
             }
+        }
+
+        void test_nextFiveDates() 
+        {
+            int test_index = 2;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            std::vector<std::string> result = input.nextFiveDates(timestamps[test_index]);
+            
+            CPPUNIT_ASSERT(result.size() == 5);
+            CPPUNIT_ASSERT(result[0] == timestamps[test_index]);
+            CPPUNIT_ASSERT(result[1] == timestamps[test_index + 1]);
+            CPPUNIT_ASSERT(result[2] == timestamps[test_index + 2]);
+            CPPUNIT_ASSERT(result[3] == timestamps[test_index + 3]);
+            CPPUNIT_ASSERT(result[4] == timestamps[test_index + 4]);
+        }
+
+        void test_computeNextFiveCandles() 
+        {
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            std::string product = "ETH/BTC";
+            OrderBookType type = OrderBookType::ask;
+            std::vector<CandleStick> result = input.computeNextFiveCandles(product, type, timestamps[test_index]);
+            std::cout << "test_computeNextFiveCandles" << std::endl;
+            for (CandleStick& c: result) 
+            {                    
+                std::cout << c.timeStamp << std::endl;
+            }
+            CPPUNIT_ASSERT(result.size() == 5);
+            for (int i=0; i < result.size(); ++i) 
+            {
+                CPPUNIT_ASSERT(result[i].timeStamp == timestamps[test_index + i]);
+            }
+            
+            
+
         }
 
 };

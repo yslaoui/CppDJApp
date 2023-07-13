@@ -49,7 +49,7 @@ std::vector<OrderBookEntry> OrderBook::getOrders(OrderBookType type,
    }
 
 
-double OrderBook::getHigherPrice(std::vector<OrderBookEntry> orders_sub) 
+double OrderBook::getHigherPrice(std::vector<OrderBookEntry>& orders_sub) 
 {
    double max =  orders_sub[0].price;
 
@@ -63,7 +63,7 @@ double OrderBook::getHigherPrice(std::vector<OrderBookEntry> orders_sub)
    return max;
 }
 
-double OrderBook::getLowerPrice(std::vector<OrderBookEntry> orders_sub) 
+double OrderBook::getLowerPrice(std::vector<OrderBookEntry>& orders_sub) 
 {
    double min =  orders_sub[0].price;
 
@@ -82,7 +82,7 @@ std::string OrderBook::getEarliestTime()
    return orders[0].timestamp;
 }  
 
-std::string OrderBook::getNextTime(std::string timeStamp) 
+std::string OrderBook::getNextTime(std::string& timeStamp) 
 {
    std::string nextTimeStamp;
    std::string result;
@@ -108,7 +108,7 @@ void OrderBook::insertOrder(OrderBookEntry& order)
 }
 
 
-std::vector<OrderBookEntry> OrderBook::matchOrders(std::string product, std::string timeStamp) 
+std::vector<OrderBookEntry> OrderBook::matchOrders(std::string& product, std::string& timeStamp) 
 {
    std::vector<OrderBookEntry> sales;
    std::vector<OrderBookEntry> asks = getOrders(OrderBookType::ask, product, timeStamp);
@@ -171,7 +171,7 @@ std::vector<OrderBookEntry> OrderBook::matchOrders(std::string product, std::str
    return orders;
  }
 
-std::string OrderBook::getPreviousTime(std::string timeStamp) 
+std::string OrderBook::getPreviousTime(std::string& timeStamp) 
 {
    std::string previousTimeStamp;
    std::string result;
@@ -190,7 +190,7 @@ std::string OrderBook::getPreviousTime(std::string timeStamp)
 }
 
 
- double OrderBook::averagePrice(std::vector<OrderBookEntry> orderEntry) 
+ double OrderBook::averagePrice(std::vector<OrderBookEntry>& orderEntry) 
  {
    double sumValue  = 0;
    double sumAmount = 0;
@@ -204,13 +204,11 @@ std::string OrderBook::getPreviousTime(std::string timeStamp)
 
  }
 
-CandleStick OrderBook::computeCandle(std::string timeStamp,
-                        std::string product,
-                        OrderBookType type) 
+CandleStick OrderBook::computeCandle(std::string& timeStamp,
+                        std::string& product,
+                        OrderBookType& type) 
 {
-      CandleStick result{timeStamp, product, type};
-
-      
+      CandleStick result{timeStamp, product, type};      
       std::vector<OrderBookEntry> currentOrders = getOrders(type, product, timeStamp);
       std::vector<OrderBookEntry> previousOrders = getOrders(type, product, getPreviousTime(timeStamp));
 
@@ -240,14 +238,15 @@ std::vector<std::string> OrderBook::getKnownTimeStamps()
    return timeStamps;               
 }
 
-std::vector<CandleStick> OrderBook::computeCandles(std::string product, OrderBookType type) 
+std::vector<CandleStick> OrderBook::computeCandles(std::string& product, OrderBookType& type) 
 {
    std::vector<CandleStick> result;
    std::vector<std::string> timeStamps = getKnownTimeStamps();
+
    for (std::string& t: timeStamps) 
    {
      result.push_back(computeCandle(t, product, type));
-  }
+   }
    return result;
 }  
 
@@ -272,19 +271,18 @@ void OrderBook::plotGrid(std::vector<std::vector<char>>& grid)
 {
    int rows = grid.size();
    int columns = grid[0].size();
-   std::cout << "Generating grid \n" << std::endl;
    for (int i=rows-1; i>=0; --i) 
    {
          for (int j=0; j<columns; ++j) 
          {
-            std::cout << "   "<< grid[i][j] << "     ";
+            std::cout << " "<< grid[i][j] << " ";
          }
          std::cout << std::endl;
    }     
-   for (int j=0; j< columns; ++j) 
-   {
-      std::cout << "time " << j << "   ";
-   }
+   // for (int j=0; j< columns; ++j) 
+   // {
+   //    std::cout << j << " ";
+   // }
    std::cout << std::endl;
 
 }
@@ -316,6 +314,7 @@ double OrderBook::highestHigh(std::vector<CandleStick>& candles)
  void OrderBook::plotCandleSticks(std::vector<CandleStick>& candles, int& desiredHeight) 
  {
    
+   // int columns = 10;
    int columns = candles.size();
    int initial = 0;
    int rows = desiredHeight;
@@ -343,9 +342,50 @@ double OrderBook::highestHigh(std::vector<CandleStick>& candles)
          if ((j>=open && j <=close) || (j<=open && j >=close)) grid[j][i] = 61;
          if ((j < low)||(j >= high)) grid[j][i] = ' ';
          if ((j == low) || (j == high-1)) grid[j][i] = '|';
+         
+
       }
-      std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << std::endl; 
+      std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << " time: " << candles[i].timeStamp << std::endl; 
       std::cout << "iteration " << i << "done" << std::endl;
    }
+   std::cout << "PRICE---------------------------------------" << candles[0].product << "------------------------------------" << std::endl;
+   
    OrderBook::plotGrid(grid);
+   std::string firstDate = candles[0].timeStamp;
+   std::string lastDate = candles[candles.size()-1].timeStamp;
+   std::cout << "TIMEFRAME-------------" << firstDate << " - " << lastDate << "------------" << std::endl;
 }
+
+std::vector<std::string>  OrderBook::nextFiveDates(std::string timeStamp) 
+{
+   std::vector<std::string> result;
+   int count = 0;
+   std::vector<std::string> timestamps = getKnownTimeStamps();
+   // Find the index of timeStamp argument
+   int currentIndex = 0;
+   while (timeStamp != timestamps[currentIndex]) 
+   {
+      currentIndex += 1;
+   }
+
+   // push the next 5 dates to the result
+   while (count < 30) 
+   {
+      result.push_back(timestamps[currentIndex]);
+      currentIndex++;
+      count++;
+   }
+   return result;
+}
+
+std::vector<CandleStick> OrderBook::computeNextFiveCandles(std::string& product, OrderBookType& type, std::string& timestamp) 
+{
+   std::vector<CandleStick> result;
+   std::vector<std::string> timeStamps = nextFiveDates(timestamp);
+
+   for (std::string& t: timeStamps) 
+   {
+     result.push_back(computeCandle(t, product, type));
+   }
+   return result;
+} 
