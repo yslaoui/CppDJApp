@@ -28,6 +28,7 @@ class ExchangeApp
         void gotoNextTimeframe();
         void processUserOption(int userOption); 
         void plotTrends();
+        void plotcandleVolumes();
 
 
 };

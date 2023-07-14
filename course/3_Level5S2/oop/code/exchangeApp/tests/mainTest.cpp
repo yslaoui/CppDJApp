@@ -106,12 +106,7 @@ int main()
     // "test_constructor", 
     // &CandleStickTest::test_constructor 
     // });  
-
-    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
-    // "test_computeCandle", 
-    // &OrderBookTest::test_computeCandle 
-    // });  
-
+ 
     // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
     // "test_getPreviousTime", 
     // &OrderBookTest::test_getPreviousTime 
@@ -120,8 +115,12 @@ int main()
     // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
     // "test_getKnownTimeStamps", 
     // &OrderBookTest::test_getKnownTimeStamps 
-    // });  
+    // }); 
 
+    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    // "test_computeCandle", 
+    // &OrderBookTest::test_computeCandle 
+    // }); 
     // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
     // "test_computeCandles", 
     // &OrderBookTest::test_computeCandles 
@@ -153,10 +152,27 @@ int main()
     // &OrderBookTest::test_computeNextFiveCandles 
     // });  
 
+    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    // "test_plotCandleSticks", 
+    // &OrderBookTest::test_plotCandleSticks 
+    // }); 
+
+    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    // "test_getVolume", 
+    // &OrderBookTest::test_getVolume 
+    // }); 
+
+    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    // "test_lowestVolume", 
+    // &OrderBookTest::test_lowestVolume 
+    // }); 
+
     myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
-    "test_plotCandleSticks", 
-    &OrderBookTest::test_plotCandleSticks 
+    "test_plotVolumes", 
+    &OrderBookTest::test_plotVolumes 
     }); 
+
+
 
     myrunner.run();
 }

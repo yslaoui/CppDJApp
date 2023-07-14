@@ -220,6 +220,9 @@ CandleStick OrderBook::computeCandle(std::string& timeStamp,
       result.close = averagePrice(currentOrders);
       result.open =  averagePrice(previousOrders);
 
+      // volume
+      result.volume = getVolume(currentOrders);
+
       return result;
 }
 
@@ -345,8 +348,8 @@ double OrderBook::highestHigh(std::vector<CandleStick>& candles)
          
 
       }
-      std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << " time: " << candles[i].timeStamp << std::endl; 
-      std::cout << "iteration " << i << "done" << std::endl;
+      // std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << " time: " << candles[i].timeStamp << std::endl; 
+      // std::cout << "iteration " << i << "done" << std::endl;
    }
    std::cout << "PRICE---------------------------------------" << candles[0].product << "------------------------------------" << std::endl;
    
@@ -389,3 +392,71 @@ std::vector<CandleStick> OrderBook::computeNextFiveCandles(std::string& product,
    }
    return result;
 } 
+
+double OrderBook::getVolume(std::vector<OrderBookEntry>& orderEntry) 
+{
+  
+   double totalAmount  = 0;
+   
+   for (OrderBookEntry& o: orderEntry) 
+   {
+      totalAmount += o.amount;
+   }
+   return totalAmount;
+  
+}
+
+double OrderBook::lowestVolume(std::vector<CandleStick>& candles) 
+{
+   double minVolume = std::numeric_limits<double>::max(); 
+   for (CandleStick& c: candles) 
+   {
+      // std::cout << "the low is " << c.low << std::endl;
+      minVolume = std::min(minVolume, c.volume);
+   }
+   return minVolume;
+}
+
+double OrderBook::highestVolume(std::vector<CandleStick>& candles) 
+{
+   double maxVolume = std::numeric_limits<double>::lowest(); 
+   for (CandleStick& c: candles) 
+   {
+      //  std::cout << "the high is " << c.high << std::endl;
+      maxVolume = std::max(maxVolume, c.volume);
+   }
+   return maxVolume;
+}
+
+void OrderBook::plotVolumes(std::vector<CandleStick>& candles, int& desiredHeight) 
+{
+   // int columns = 10;
+   int columns = candles.size();
+   int initial = 0;
+   int rows = desiredHeight;
+   std::vector<std::vector<char>> grid = OrderBook::generateGrid(rows, columns);
+   double lowestLow = lowestVolume(candles);
+   double highestHigh = highestVolume(candles);
+   int volume;
+   std::cout << "The lowest volume all products is " << lowestLow << std::endl;
+   std::cout << "The highest volume across all products is " << highestHigh << std::endl;
+   for (int i=0; i< columns; ++i) 
+   {
+      volume  = getPosition(candles[i].volume, lowestLow, highestHigh, initial, desiredHeight);
+      for (int j=0; j< rows; ++j) 
+      {
+         if ( j <= volume) grid[j][i] = 61;
+      }  
+   }
+   std::cout << "VOLUME---------------------------------------" << candles[0].product << "------------------------------------" << std::endl;
+   
+   OrderBook::plotGrid(grid);
+   std::string firstDate = candles[0].timeStamp;
+   std::string lastDate = candles[candles.size()-1].timeStamp;
+   std::cout << "TIMEFRAME-------------" << firstDate << " - " << lastDate << "------------" << std::endl;
+
+}
+
+
+
+

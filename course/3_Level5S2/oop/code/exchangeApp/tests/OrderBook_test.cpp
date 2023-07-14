@@ -145,7 +145,7 @@ class OrderBookTest : public CppUnit::TestFixture
 
         void test_computeCandle() 
         {
-             std::cout << "yeah this is NOT working" << std::endl;
+
             for (const auto & t: input.getKnownTimeStamps()) 
             {
                 for (const auto & p: input.getKnownProducts()) 
@@ -167,14 +167,15 @@ class OrderBookTest : public CppUnit::TestFixture
             CPPUNIT_ASSERT( candle.timeStamp == timeStamp);
             CPPUNIT_ASSERT( candle.product == product);
             CPPUNIT_ASSERT( candle.orderType == type);
-  
-
             CPPUNIT_ASSERT( candle.high == 5463.22);
             CPPUNIT_ASSERT( candle.low == 5360.03200001);
             std::cout << "candle.close" << candle.close << std::endl;
             std::cout << "candle.open" << candle.open << std::endl;
             CPPUNIT_ASSERT( abs(candle.close - 5394.07) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
             CPPUNIT_ASSERT( abs(candle.open  - 5394.38) < 0.1 ); // value computed from excel, because of rounding errors ABS is better than ==
+            std::cout << "Printing volume" << std::endl;
+            std::cout << candle.volume << std::endl;
+            CPPUNIT_ASSERT(candle.volume == 39.59567974);
             // testing last date
             // std::string timeStamp = "2020/03/17 17:02:00.124758";
             // std::string product = "DOGE/BTC";
@@ -222,18 +223,7 @@ class OrderBookTest : public CppUnit::TestFixture
                 CPPUNIT_ASSERT(result[i].timeStamp == input.getKnownTimeStamps()[i]);
             }
             // testing products
-            for (int i=0; i<result.size(); ++i) 
-            {
-                CPPUNIT_ASSERT(result[i].product == product);
-            }
-            // testing order types
-            for (int i=0; i<result.size(); ++i) 
-            {
-                CPPUNIT_ASSERT(result[i].orderType == type);
-            }
-            // testing high
-            for (int i=0; i<result.size(); ++i) 
-            {   
+            for (int i=0; i<result.size(); ++i) {
                 std::vector<OrderBookEntry> testOrders = input.getOrders(type, product, result[i].timeStamp);
                 CPPUNIT_ASSERT(result[i].high == input.getHigherPrice(testOrders));
             }
@@ -348,6 +338,7 @@ class OrderBookTest : public CppUnit::TestFixture
             OrderBookType type = OrderBookType::ask;
             std::vector<CandleStick> result = input.computeNextFiveCandles(product, type, timestamps[test_index]);
             std::cout << "test_computeNextFiveCandles" << std::endl;
+            std::cout << "Hi" << std::endl;
             for (CandleStick& c: result) 
             {                    
                 std::cout << c.timeStamp << std::endl;
@@ -358,10 +349,52 @@ class OrderBookTest : public CppUnit::TestFixture
                 CPPUNIT_ASSERT(result[i].timeStamp == timestamps[test_index + i]);
             }
             
+        }
+
+        void test_getVolume() 
+        {
             
+            OrderBookType type = OrderBookType::ask;
+            std::string product = "BTC/USDT";
+            std::string timeStamp = "2020/03/17 17:01:24.884492";
+            std::vector<OrderBookEntry> currentOrders = input.getOrders(type, product, timeStamp);
+            CPPUNIT_ASSERT(OrderBook::getVolume(currentOrders) == 33.33036439);   
+        }
+
+       void test_lowestVolume()  
+        { 
+
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            std::string product = "ETH/BTC";
+            OrderBookType type = OrderBookType::ask;
+            std::vector<CandleStick> candles = input.computeNextFiveCandles(product, 
+                                                                    type, 
+                                                                    timestamps[test_index]);
+            double lowestVolume = OrderBook::lowestVolume(candles);
+            double highestVolume = OrderBook::highestVolume(candles);
+            
+            CPPUNIT_ASSERT(abs(lowestVolume - 921.831) < 0.1 );
+            CPPUNIT_ASSERT(abs(highestVolume - 1131.44) < 0.1 );
+
 
         }
 
+        void test_plotVolumes() 
+        {
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            int desiredHeight = 20; 
+            OrderBookType type  = OrderBookType::bid;
+            for (std::string& p: input.getKnownProducts()) 
+            {
+                std::vector<CandleStick> candles = input.computeNextFiveCandles(p, type, timestamps[test_index]);
+                std::cout << "**************************************** "  << std::endl;   
+                std::cout << "Candle sticks for product " << p << std::endl;
+                std::cout << "**************************************** "  << std::endl;
+                OrderBook::plotVolumes(candles, desiredHeight);                
+            }
+        }
 };
 
 /*

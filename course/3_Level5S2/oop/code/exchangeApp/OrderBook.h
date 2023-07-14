@@ -89,8 +89,25 @@ class OrderBook
     /** Plot candle sticks*/
     static void plotCandleSticks(std::vector<CandleStick>& candles, int& desiredHeight);
 
+
     /** return vector of 5 dates after the argument date string*/
     std::vector<std::string> nextFiveDates(std::string timeStamp);
+
+    /** Compute the sum of amounts in a vector of OrderBookEntry objects */
+    static double getVolume(std::vector<OrderBookEntry>& orderEntry);
+
+    /** Returns the lowest  volume in a vector of candle sticks*/
+    static double lowestVolume(std::vector<CandleStick>& candles);
+
+    /** Returns the highest  volume in a vector of candle sticks*/
+    static double highestVolume(std::vector<CandleStick>& candles);
+
+    /** Plot volume*/
+    static void plotVolumes(std::vector<CandleStick>& candles, int& desiredHeight);
+
+
+
+
 
     private: 
     /** Vector of OrderBookEntry objects, each representing one row in the CSV file*/ 
