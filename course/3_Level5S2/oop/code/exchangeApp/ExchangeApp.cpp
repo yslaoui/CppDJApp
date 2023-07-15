@@ -186,48 +186,49 @@ void ExchangeApp::plotTrends()
     std::cout << "make a candle stick plot - enter the product and type example BTC/USDT,ask. No spaces in between!" <<std::endl;
     std::string input;
     std::getline(std::cin, input);    
-    try 
-    {
-        std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
-        if (tokens.size() != 2) std::cout << "ExchangeApp::plotTrends(): Incorrect number of inputs" << std::endl;
-        int desiredHeight = 20;
-        std::string product = tokens[0];
-        OrderBookType type =  OrderBookEntry::stringToOrderBookType(tokens[1]);
-        std::string candlePlotStartTime = orders.getNextTime(currentTime); // at t=0, open=close so candlestick is not relevant
-        std::vector<CandleStick> candles = orders.computeNextFiveCandles(product, type, candlePlotStartTime);
-        std::cout << "**************************************** "  << std::endl;   
-        std::cout << "Candle sticks for product " << product << " and type " << tokens[1] << std::endl;
-        std::cout << "**************************************** "  << std::endl;
-        OrderBook::plotCandleSticks(candles, desiredHeight);
+    std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
+    if (tokens.size() != 2) std::cout << "ExchangeApp::plotTrends(): Incorrect number of inputs" << std::endl;
+    int desiredHeight = 20;
+    std::string product = tokens[0];
+    try {
+    OrderBookType type =  OrderBookEntry::stringToOrderBookType(tokens[1]);
+    std::string candlePlotStartTime = orders.getNextTime(currentTime); // at t=0, open=close so candlestick is not relevant
+    std::vector<CandleStick> candles = orders.computeNextFiveCandles(product, type, candlePlotStartTime);
+    std::cout << "**************************************** "  << std::endl;   
+    std::cout << "Candle sticks for product " << product << " and type " << tokens[1] << std::endl;
+    std::cout << "**************************************** "  << std::endl;
+    OrderBook::plotCandleSticksYaxis(candles, desiredHeight);
     }
-    catch(const std::exception&) 
+    catch(const std::exception& e) 
     {
         std::cout << "Plot not available. Please make sure your tickers match the dataset" << std::endl;
+        std::cout << "Exception caught" << e.what() <<std::endl;
     }
 }
 
 void ExchangeApp::plotcandleVolumes() 
 {
     std::cout << "make a volume plot - enter the product and type example BTC/USDT,ask. No spaces in between!" <<std::endl;
+
     std::string input;
     std::getline(std::cin, input);    
-    try 
-    {
-        std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
-        if (tokens.size() != 2) std::cout << "ExchangeApp::plotVolumes() : Incorrect number of inputs" << std::endl;
-        int desiredHeight = 20;
-        std::string product = tokens[0];
-        OrderBookType type =  OrderBookEntry::stringToOrderBookType(tokens[1]);
-        std::string candlePlotStartTime = orders.getNextTime(currentTime); // at t=0, open=close so candlestick is not relevant
-        std::vector<CandleStick> candles = orders.computeNextFiveCandles(product, type, candlePlotStartTime);
-        std::cout << "**************************************** "  << std::endl;   
-        std::cout << "Volumes for product " << product << " and type " << tokens[1] << std::endl;
-        std::cout << "**************************************** "  << std::endl;
-        OrderBook::plotVolumes(candles, desiredHeight);
+    std::vector<std::string> tokens = CsvReader::tokenize(input, ',');
+    if (tokens.size() != 2) std::cout << "ExchangeApp::plotVolumes() : Incorrect number of inputs" << std::endl;
+    int desiredHeight = 20;
+    std::string product = tokens[0];
+    try {    
+    OrderBookType type =  OrderBookEntry::stringToOrderBookType(tokens[1]);
+    std::string candlePlotStartTime = orders.getNextTime(currentTime); // at t=0, open=close so candlestick is not relevant
+    std::vector<CandleStick> candles = orders.computeNextFiveCandles(product, type, candlePlotStartTime);
+    std::cout << "**************************************** "  << std::endl;   
+    std::cout << "Volumes for product " << product << " and type " << tokens[1] << std::endl;
+    std::cout << "**************************************** "  << std::endl;
+    OrderBook::plotVolumesYaxis(candles, desiredHeight);
     }
-    catch(const std::exception&) 
+    catch(const std::exception& e) 
     {
         std::cout << "Plot not available. Please make sure your tickers match the dataset" << std::endl;
+        std::cout << "Exception caught" << e.what() <<std::endl; 
     }
 }
 

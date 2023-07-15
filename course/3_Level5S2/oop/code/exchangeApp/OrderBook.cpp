@@ -4,6 +4,14 @@
 #include <algorithm> // for std::sort
 #include "ExchangeApp.h"
 #include <cmath>
+#include <sstream>
+#include <iomanip> // for std::fixed and std::setprecision
+
+#define RESET_COLOR "\033[0m"
+#define GREEN_COLOR "\033[32m"
+#define BLUE_COLOR "\033[34m"
+#define RED_COLOR "\033[31m"
+
 
 /*
 First create the cpp file for the class implement a dummy version of the three
@@ -274,11 +282,12 @@ void OrderBook::plotGrid(std::vector<std::vector<char>>& grid)
 {
    int rows = grid.size();
    int columns = grid[0].size();
+   printf(GREEN_COLOR);
    for (int i=rows-1; i>=0; --i) 
    {
          for (int j=0; j<columns; ++j) 
          {
-            std::cout << " "<< grid[i][j] << " ";
+            std::cout << " "<< "\033[32m" << grid[i][j] << " ";
          }
          std::cout << std::endl;
    }     
@@ -352,7 +361,7 @@ double OrderBook::highestHigh(std::vector<CandleStick>& candles)
       // std::cout << "iteration " << i << "done" << std::endl;
    }
    std::cout << "PRICE---------------------------------------" << candles[0].product << "------------------------------------" << std::endl;
-   
+   std::cout << GREEN_COLOR;
    OrderBook::plotGrid(grid);
    std::string firstDate = candles[0].timeStamp;
    std::string lastDate = candles[candles.size()-1].timeStamp;
@@ -456,6 +465,119 @@ void OrderBook::plotVolumes(std::vector<CandleStick>& candles, int& desiredHeigh
    std::cout << "TIMEFRAME-------------" << firstDate << " - " << lastDate << "------------" << std::endl;
 
 }
+
+void OrderBook::plotGridYaxis(std::vector<std::vector<char>>& grid, std::vector<std::string>& yValues) 
+{
+   int rows = grid.size();
+   int columns = grid[0].size();
+   for (int i=rows-1; i>=0; --i) 
+   {
+         std::cout << yValues[i];
+         for (int j=0; j<columns; ++j) 
+         {
+            std::cout << " "<< grid[i][j] << " ";
+         }
+         std::cout << std::endl;
+   }     
+   std::cout << std::endl;
+}
+
+std::vector<std::string> OrderBook::getYaxis(double& a, double& b, int& desiredHeight) 
+{
+   std::vector<std::string> result;
+   for (int i=0; i< desiredHeight; ++i) 
+   {
+      double c = a + ((b - a) * i) / desiredHeight;
+      // Convert c to a string with a fixed number of characters
+      std::stringstream stream;
+      stream << std::fixed << std::setprecision(2) << c; // Set precision to 2 decimal places (you can adjust as needed)
+      std::string cString = stream.str();
+      result.push_back(cString);
+   }
+   return result;
+}
+
+void OrderBook::plotCandleSticksYaxis(std::vector<CandleStick>& candles, int& desiredHeight) 
+{
+   // int columns = 10;
+   int columns = candles.size();
+   int initial = 0;
+   int rows = desiredHeight;
+   std::vector<std::vector<char>> grid = OrderBook::generateGrid(rows, columns);
+   double lowestLow = OrderBook::lowestLow(candles);
+   double highestHigh = OrderBook::highestHigh(candles);
+   int open;
+   int close;
+   int high;
+   int low;
+   std::cout << "The lowest low across all products is " << lowestLow << std::endl;
+   std::cout << "The highest high across all products is " << highestHigh << std::endl;
+
+   // Filling the grid
+   for (int i=0; i< columns; ++i) 
+   {
+      open  = OrderBook::getPosition(candles[i].open,  lowestLow, highestHigh, initial, desiredHeight);
+      close = OrderBook::getPosition(candles[i].close, lowestLow, highestHigh, initial, desiredHeight);
+      high  = OrderBook::getPosition(candles[i].high,  lowestLow, highestHigh, initial, desiredHeight);
+      low   = OrderBook::getPosition(candles[i].low,   lowestLow, highestHigh, initial, desiredHeight);
+      grid[open][i]  = 'o';
+      grid[close][i] = 'c';
+      grid[high-1][i]  = 'h';
+      grid[low][i]   = 'l';
+      for (int j=0; j< rows; ++j) 
+      {
+         if ((j>=open && j <=close) || (j<=open && j >=close)) grid[j][i] = 61;
+         if ((j < low)||(j >= high)) grid[j][i] = ' ';
+         if ((j == low) || (j == high-1)) grid[j][i] = '|';
+         
+
+      }
+      // std::cout << "open: " << candles[i].open <<" close: " << candles[i].close <<" high: " << candles[i].high <<" low: " << candles[i].low << " time: " << candles[i].timeStamp << std::endl; 
+      // std::cout << "iteration " << i << "done" << std::endl;
+   }
+   std::cout << "PRICE--------------------------------------------" << candles[0].product << "-----------------------------------------" << std::endl;   
+  
+   // Y axis
+   std::vector<std::string> yValues = OrderBook::getYaxis(lowestLow, highestHigh, desiredHeight);
+   OrderBook::plotGridYaxis(grid, yValues);
+   std::string firstDate = candles[0].timeStamp;
+   std::string lastDate = candles[candles.size()-1].timeStamp;
+   std::cout << "TIMEFRAME------------------" << firstDate << " - " << lastDate << "-----------------" << std::endl;
+   std::cout << std::endl;
+}
+
+void OrderBook::plotVolumesYaxis(std::vector<CandleStick>& candles, int& desiredHeight) 
+{
+   // int columns = 10;
+   int columns = candles.size();
+   int initial = 0;
+   int rows = desiredHeight;
+   std::vector<std::vector<char>> grid = OrderBook::generateGrid(rows, columns);
+   double lowestLow = lowestVolume(candles);
+   double highestHigh = highestVolume(candles);
+   int volume;
+   std::cout << "The lowest volume all products is " << lowestLow << std::endl;
+   std::cout << "The highest volume across all products is " << highestHigh << std::endl;
+   for (int i=0; i< columns; ++i) 
+   {
+      volume  = getPosition(candles[i].volume, lowestLow, highestHigh, initial, desiredHeight);
+      for (int j=0; j< rows; ++j) 
+      {
+         if ( j <= volume) grid[j][i] = 61;
+      }  
+   }
+   std::cout << "VOLUME---------------------------------------" << candles[0].product << "------------------------------------" << std::endl;
+   
+   std::vector<std::string> yValues = OrderBook::getYaxis(lowestLow, highestHigh, desiredHeight);
+   OrderBook::plotGridYaxis(grid, yValues);
+   std::string firstDate = candles[0].timeStamp;
+   std::string lastDate = candles[candles.size()-1].timeStamp;
+   std::cout << "TIMEFRAME-------------" << firstDate << " - " << lastDate << "------------" << std::endl;
+
+}
+
+
+
 
 
 

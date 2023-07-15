@@ -395,6 +395,72 @@ class OrderBookTest : public CppUnit::TestFixture
                 OrderBook::plotVolumes(candles, desiredHeight);                
             }
         }
+
+        void test_plotGridYaxis() 
+        {
+            int rows = 5;
+            double a = 10;
+            double b = 20;
+            int desiredHeight = 10;
+            std::vector<std::string> yAxis = OrderBook::getYaxis(a, b, desiredHeight);
+
+            // std::vector<std::string> yValues;
+            // for (int i=0; i<rows; ++i) 
+            // {
+            //     yValues.push_back("xx");
+            // }
+            int columns = 5;
+            std::vector<std::vector<char>>  grid =  OrderBook::generateGrid(rows, columns);
+            grid[2][3] = 'o';
+            std::cout << std::endl;
+            OrderBook::plotGridYaxis(grid, yAxis);
+        }
+
+        void test_getYaxis() 
+        {
+            double a = 10;
+            double b = 20;
+            int desiredHeight = 10;
+            std::vector<std::string> result = OrderBook::getYaxis(a, b, desiredHeight);
+            for (int i=0; i< desiredHeight; ++i) 
+            {
+                std::cout << result[i] << std::endl;
+            }
+        }
+
+        void test_plotCandleSticksYaxis() 
+        {
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            int desiredHeight = 20; 
+            OrderBookType type  = OrderBookType::bid;
+            for (std::string& p: input.getKnownProducts()) 
+            {
+                std::vector<CandleStick> candles = input.computeNextFiveCandles(p, type, timestamps[test_index]);
+                std::cout << "**************************************** "  << std::endl;   
+                std::cout << "Candle sticks for product " << p << std::endl;
+                std::cout << "**************************************** "  << std::endl;
+                OrderBook::plotCandleSticksYaxis(candles, desiredHeight);                
+            }
+        }
+
+        void test_plotVolumesYaxis() 
+        {
+            int test_index = 1;
+            std::vector<std::string> timestamps = input.getKnownTimeStamps();
+            int desiredHeight = 20; 
+            OrderBookType type  = OrderBookType::bid;
+            for (std::string& p: input.getKnownProducts()) 
+            {
+                std::vector<CandleStick> candles = input.computeNextFiveCandles(p, type, timestamps[test_index]);
+                std::cout << "**************************************** "  << std::endl;   
+                std::cout << "Candle sticks for product " << p << std::endl;
+                std::cout << "**************************************** "  << std::endl;
+                OrderBook::plotVolumesYaxis(candles, desiredHeight);                
+            }
+        }
+
+
 };
 
 /*

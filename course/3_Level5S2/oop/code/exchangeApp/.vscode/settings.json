@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.ejs": "html",
         "*.embeddedhtml": "html",
         "cctype": "cpp",
         "clocale": "cpp",
@@ -48,6 +49,8 @@
         "fstream": "cpp",
         "map": "cpp",
         "strstream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "ctime": "cpp",
+        "iomanip": "cpp"
     }
 }

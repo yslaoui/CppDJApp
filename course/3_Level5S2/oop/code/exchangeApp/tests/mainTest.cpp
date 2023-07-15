@@ -167,9 +167,29 @@ int main()
     // &OrderBookTest::test_lowestVolume 
     // }); 
 
+    // myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    // "test_plotVolumes", 
+    // &OrderBookTest::test_plotVolumes 
+    // }); 
+
     myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
-    "test_plotVolumes", 
-    &OrderBookTest::test_plotVolumes 
+    "test_plotGridYaxis", 
+    &OrderBookTest::test_plotGridYaxis 
+    }); 
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_getYaxis", 
+    &OrderBookTest::test_getYaxis 
+    }); 
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "plotCandleSticksYaxis", 
+    &OrderBookTest::test_plotCandleSticksYaxis 
+    }); 
+
+    myrunner.addTest(new CppUnit::TestCaller<OrderBookTest> {
+    "test_plotVolumesYaxis", 
+    &OrderBookTest::test_plotVolumesYaxis 
     }); 
 
 

@@ -105,8 +105,18 @@ class OrderBook
     /** Plot volume*/
     static void plotVolumes(std::vector<CandleStick>& candles, int& desiredHeight);
 
+    /** plot grid with y axis*/
+    static void plotGridYaxis(std::vector<std::vector<char>>& grid, std::vector<std::string>& yValues);
 
+    /** get Y axis values*/
 
+    static std::vector<std::string> getYaxis(double& a, double& b, int& desiredHeight);
+
+    /** Plot candle sticks with Y axis*/
+    static void plotCandleSticksYaxis(std::vector<CandleStick>& candles, int& desiredHeight);
+
+    /** Plot volume*/
+    static void plotVolumesYaxis(std::vector<CandleStick>& candles, int& desiredHeight);
 
 
     private: 
